@@ -1,0 +1,75 @@
+basePath: /api/v1
+info:
+  contact: {}
+  description: "В основе лежит мой курсовой проект \U0001F60E"
+  title: Идентификация на КПП
+  version: "1.0"
+paths:
+  /examples/pin:
+    get:
+      consumes:
+      - application/json
+      description: FillProfile
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: pong
+          schema:
+            type: string
+        "400":
+          description: ok
+          schema:
+            type: string
+        "404":
+          description: ok
+          schema:
+            type: string
+        "500":
+          description: ok
+          schema:
+            type: string
+      summary: FillProfile
+      tags:
+      - example
+  /examples/ping:
+    get:
+      consumes:
+      - application/json
+      description: do ping Register
+      produces:
+      - text/plain
+      responses:
+        "200":
+          description: pong
+          schema:
+            type: string
+        "400":
+          description: ok
+          schema:
+            type: string
+        "404":
+          description: ok
+          schema:
+            type: string
+        "500":
+          description: ok
+          schema:
+            type: string
+      summary: Register example
+      tags:
+      - example
+  /healthcheck:
+    get:
+      description: Проверка на жизнеспособность
+      responses:
+        "200":
+          description: Сервис жив
+          schema:
+            type: string
+        "404":
+          description: Сервис мертв
+      summary: Проверка здоровья
+      tags:
+      - Системные
+swagger: "2.0"
