@@ -19,3 +19,7 @@
 
 # Go workspace file
 go.work
+
+# JB and Mac files
+.idea
+.DS_Store
