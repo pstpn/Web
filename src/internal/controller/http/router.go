@@ -43,7 +43,7 @@ func NewRouter(handler *gin.Engine) *Controller {
 //
 //	@Summary		Проверка здоровья
 //	@Description	Проверка на жизнеспособность
-//	@Tags			Системные
+//	@Tags			system
 //	@Success		200	{string} string "Сервис жив"
 //	@Failure		404	"Сервис мертв"
 //	@Router			/healthcheck [get]
@@ -80,7 +80,7 @@ func (c *Controller) SetInfoCardRoute(
 
 	c.routerGroup.GET("/infocards", i.ListFullInfoCards)
 	c.routerGroup.GET("/infocards/:id", i.GetFullInfoCard)
-	c.routerGroup.PUT("/infocards/:id", i.ConfirmEmployeeInfoCard)
+	c.routerGroup.PATCH("/infocards/:id", i.ConfirmEmployeeInfoCard)
 	c.routerGroup.GET("infocard-photos/:id", i.GetEmployeeInfoCardPhoto)
 }
 
@@ -94,6 +94,7 @@ func (c *Controller) SetProfileRoute(
 ) {
 	p := user.NewProfileController(l, infoCardService, documentService, fieldService, authService, photoService)
 
+	// https://restfulapi.net/resource-naming/#:~:text=than%20one%20archetype.-,2.1.1.%20document,-A%20document%20resource
 	c.routerGroup.POST("/profile", p.FillProfile)
 	c.routerGroup.GET("/profile", p.GetProfile)
 	c.routerGroup.GET("/employee-photo", p.GetEmployeePhoto)

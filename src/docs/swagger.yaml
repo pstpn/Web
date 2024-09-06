@@ -5,60 +5,19 @@ info:
   title: Идентификация на КПП
   version: "1.0"
 paths:
-  /examples/pin:
+  /employee-photo:
     get:
-      consumes:
-      - application/json
-      description: FillProfile
-      produces:
-      - text/plain
+      description: Метод для получения фотографии своего профиля
       responses:
         "200":
-          description: pong
-          schema:
-            type: string
-        "400":
-          description: ok
+          description: Сервис жив
           schema:
             type: string
         "404":
-          description: ok
-          schema:
-            type: string
-        "500":
-          description: ok
-          schema:
-            type: string
-      summary: FillProfile
+          description: Сервис мертв
+      summary: Получение фотографии своего профиля
       tags:
-      - example
-  /examples/ping:
-    get:
-      consumes:
-      - application/json
-      description: do ping Register
-      produces:
-      - text/plain
-      responses:
-        "200":
-          description: pong
-          schema:
-            type: string
-        "400":
-          description: ok
-          schema:
-            type: string
-        "404":
-          description: ok
-          schema:
-            type: string
-        "500":
-          description: ok
-          schema:
-            type: string
-      summary: Register example
-      tags:
-      - example
+      - employee
   /healthcheck:
     get:
       description: Проверка на жизнеспособность
@@ -71,5 +30,133 @@ paths:
           description: Сервис мертв
       summary: Проверка здоровья
       tags:
-      - Системные
+      - system
+  /infocard-photos/{id}:
+    get:
+      description: Метод для получения элемента коллекции фотографий сотрудников
+      responses:
+        "200":
+          description: Сервис жив
+          schema:
+            type: string
+        "404":
+          description: Сервис мертв
+      summary: Получение элемента коллекции фотографий сотрудников
+      tags:
+      - admin
+  /infocards:
+    get:
+      description: Метод для получения коллекции информационных карточек
+      responses:
+        "200":
+          description: Сервис жив
+          schema:
+            type: string
+        "404":
+          description: Сервис мертв
+      summary: Получение коллекции информационных карточек
+      tags:
+      - admin
+  /infocards/{id}:
+    get:
+      description: Метод для получения элемента коллекции информационных карточек
+      responses:
+        "200":
+          description: Сервис жив
+          schema:
+            type: string
+        "404":
+          description: Сервис мертв
+      summary: Получение элемента коллекции информационных карточек
+      tags:
+      - admin
+    patch:
+      description: Метод для подтверждения информационной карточки сотрудника
+      responses:
+        "200":
+          description: Сервис жив
+          schema:
+            type: string
+        "404":
+          description: Сервис мертв
+      summary: Подтверждение информационной карточки сотрудника
+      tags:
+      - admin
+  /login:
+    post:
+      description: Метод для авторизации пользователя
+      responses:
+        "200":
+          description: Сервис жив
+          schema:
+            type: string
+        "404":
+          description: Сервис мертв
+      summary: Авторизация пользователя
+      tags:
+      - auth
+  /passages:
+    post:
+      description: Метод для записи о проходе через КПП
+      responses:
+        "200":
+          description: Сервис жив
+          schema:
+            type: string
+        "404":
+          description: Сервис мертв
+      summary: Запись информации о проходе через КПП
+      tags:
+      - admin
+  /profile:
+    get:
+      description: Метод для получения профиля
+      responses:
+        "200":
+          description: Сервис жив
+          schema:
+            type: string
+        "404":
+          description: Сервис мертв
+      summary: Получение профиля
+      tags:
+      - employee
+    post:
+      description: Метод для заполнения профиля
+      responses:
+        "200":
+          description: Сервис жив
+          schema:
+            type: string
+        "404":
+          description: Сервис мертв
+      summary: Заполнение профиля
+      tags:
+      - employee
+  /refresh:
+    post:
+      description: Метод для обновления токенов доступа пользователя
+      responses:
+        "200":
+          description: Сервис жив
+          schema:
+            type: string
+        "404":
+          description: Сервис мертв
+      summary: Обновление токенов доступа
+      tags:
+      - auth
+  /register:
+    post:
+      description: Метод для регистрации пользователя
+      responses:
+        "200":
+          description: Сервис жив
+          schema:
+            type: string
+        "404":
+          description: Сервис мертв
+      summary: Регистрация пользователя
+      tags:
+      - auth
 swagger: "2.0"

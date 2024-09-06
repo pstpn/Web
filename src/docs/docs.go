@@ -15,84 +15,22 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/examples/pin": {
+        "/employee-photo": {
             "get": {
-                "description": "FillProfile",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "text/plain"
-                ],
+                "description": "Метод для получения фотографии своего профиля",
                 "tags": [
-                    "example"
+                    "employee"
                 ],
-                "summary": "FillProfile",
+                "summary": "Получение фотографии своего профиля",
                 "responses": {
                     "200": {
-                        "description": "pong",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "400": {
-                        "description": "ok",
+                        "description": "Сервис жив",
                         "schema": {
                             "type": "string"
                         }
                     },
                     "404": {
-                        "description": "ok",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "ok",
-                        "schema": {
-                            "type": "string"
-                        }
-                    }
-                }
-            }
-        },
-        "/examples/ping": {
-            "get": {
-                "description": "do ping Register",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "text/plain"
-                ],
-                "tags": [
-                    "example"
-                ],
-                "summary": "Register example",
-                "responses": {
-                    "200": {
-                        "description": "pong",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "400": {
-                        "description": "ok",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "404": {
-                        "description": "ok",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "500": {
-                        "description": "ok",
-                        "schema": {
-                            "type": "string"
-                        }
+                        "description": "Сервис мертв"
                     }
                 }
             }
@@ -101,9 +39,205 @@ const docTemplate = `{
             "get": {
                 "description": "Проверка на жизнеспособность",
                 "tags": [
-                    "Системные"
+                    "system"
                 ],
                 "summary": "Проверка здоровья",
+                "responses": {
+                    "200": {
+                        "description": "Сервис жив",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Сервис мертв"
+                    }
+                }
+            }
+        },
+        "/infocard-photos/{id}": {
+            "get": {
+                "description": "Метод для получения элемента коллекции фотографий сотрудников",
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Получение элемента коллекции фотографий сотрудников",
+                "responses": {
+                    "200": {
+                        "description": "Сервис жив",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Сервис мертв"
+                    }
+                }
+            }
+        },
+        "/infocards": {
+            "get": {
+                "description": "Метод для получения коллекции информационных карточек",
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Получение коллекции информационных карточек",
+                "responses": {
+                    "200": {
+                        "description": "Сервис жив",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Сервис мертв"
+                    }
+                }
+            }
+        },
+        "/infocards/{id}": {
+            "get": {
+                "description": "Метод для получения элемента коллекции информационных карточек",
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Получение элемента коллекции информационных карточек",
+                "responses": {
+                    "200": {
+                        "description": "Сервис жив",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Сервис мертв"
+                    }
+                }
+            },
+            "patch": {
+                "description": "Метод для подтверждения информационной карточки сотрудника",
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Подтверждение информационной карточки сотрудника",
+                "responses": {
+                    "200": {
+                        "description": "Сервис жив",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Сервис мертв"
+                    }
+                }
+            }
+        },
+        "/login": {
+            "post": {
+                "description": "Метод для авторизации пользователя",
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Авторизация пользователя",
+                "responses": {
+                    "200": {
+                        "description": "Сервис жив",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Сервис мертв"
+                    }
+                }
+            }
+        },
+        "/passages": {
+            "post": {
+                "description": "Метод для записи о проходе через КПП",
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Запись информации о проходе через КПП",
+                "responses": {
+                    "200": {
+                        "description": "Сервис жив",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Сервис мертв"
+                    }
+                }
+            }
+        },
+        "/profile": {
+            "get": {
+                "description": "Метод для получения профиля",
+                "tags": [
+                    "employee"
+                ],
+                "summary": "Получение профиля",
+                "responses": {
+                    "200": {
+                        "description": "Сервис жив",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Сервис мертв"
+                    }
+                }
+            },
+            "post": {
+                "description": "Метод для заполнения профиля",
+                "tags": [
+                    "employee"
+                ],
+                "summary": "Заполнение профиля",
+                "responses": {
+                    "200": {
+                        "description": "Сервис жив",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Сервис мертв"
+                    }
+                }
+            }
+        },
+        "/refresh": {
+            "post": {
+                "description": "Метод для обновления токенов доступа пользователя",
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Обновление токенов доступа",
+                "responses": {
+                    "200": {
+                        "description": "Сервис жив",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "404": {
+                        "description": "Сервис мертв"
+                    }
+                }
+            }
+        },
+        "/register": {
+            "post": {
+                "description": "Метод для регистрации пользователя",
+                "tags": [
+                    "auth"
+                ],
+                "summary": "Регистрация пользователя",
                 "responses": {
                     "200": {
                         "description": "Сервис жив",
