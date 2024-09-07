@@ -28,13 +28,19 @@ func NewAuthController(l logger.Interface, authService service.AuthService) *Aut
 }
 
 type registerRequest struct {
-	PhoneNumber string `json:"phoneNumber"`
-	Name        string `json:"name"`
-	Surname     string `json:"surname"`
-	CompanyID   int64  `json:"companyID"`
-	Post        string `json:"post"`
-	Password    string `json:"password"`
-	DateOfBirth string `json:"dateOfBirth"`
+	PhoneNumber string `json:"phoneNumber" example:"+71234567890"`
+	Name        string `json:"name"  example:"Степа"`
+	Surname     string `json:"surname"  example:"Степик"`
+	CompanyID   int64  `json:"companyID"  example:"1"`
+	Post        string `json:"post"  example:"Сотрудник"`
+	Password    string `json:"password"  example:"123"`
+	DateOfBirth string `json:"dateOfBirth"  example:"31.03.2004"`
+}
+
+type registerResponse struct {
+	AccessToken  string `json:"accessToken" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2IiwiaWF0IjoxNzI1NzE4NTc2fQ.RdcJHE8TULJKW-mVyn-0OBL_O_kmISrFNuK6E8FeRSs"`
+	RefreshToken string `json:"refreshToken" example:"c8edc98acee4d6243add4e59f8fd46d6a7f150831d74f0feb3a10144cbe0c032"`
+	IsAdmin      bool   `json:"isAdmin" example:"false" format:"bool"`
 }
 
 // Register godoc
@@ -42,9 +48,10 @@ type registerRequest struct {
 //	@Summary		Регистрация пользователя
 //	@Description	Метод для регистрации пользователя
 //	@Tags			auth
-//	@Success		200	{string} string "Сервис жив"
-//	@Failure		404	"Сервис мертв"
-//	@Failure		404	"Сервис мертв"
+//	@Param			registerRequest	body		registerRequest					true	"Регистрация пользователя"
+//	@Success		200				{object}	registerResponse				"Пользователь успешно зарегистрирован"
+//	@Failure		400				{object}	http.StatusBadRequest			"Некорректное тело запроса"
+//	@Failure		500				{object}	http.StatusInternalServerError	"Внутренняя ошибка регистрации пользователя"
 //	@Router			/register [post]
 func (a *AuthController) Register(c *gin.Context) {
 	var req registerRequest
@@ -79,25 +86,33 @@ func (a *AuthController) Register(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"accessToken":  tokens.AccessToken,
-		"refreshToken": tokens.RefreshToken,
-		"isAdmin":      tokens.IsAdmin,
+	c.JSON(http.StatusOK, registerResponse{
+		AccessToken:  tokens.AccessToken,
+		RefreshToken: tokens.RefreshToken,
+		IsAdmin:      tokens.IsAdmin,
 	})
 }
 
 type loginRequest struct {
-	PhoneNumber string `json:"phoneNumber"`
-	Password    string `json:"password"`
+	PhoneNumber string `json:"phoneNumber" example:"+71234567890"`
+	Password    string `json:"password" example:"123"`
+}
+
+type loginResponse struct {
+	AccessToken  string `json:"accessToken" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2IiwiaWF0IjoxNzI1NzE4NTc2fQ.RdcJHE8TULJKW-mVyn-0OBL_O_kmISrFNuK6E8FeRSs"`
+	RefreshToken string `json:"refreshToken" example:"c8edc98acee4d6243add4e59f8fd46d6a7f150831d74f0feb3a10144cbe0c032"`
+	IsAdmin      bool   `json:"isAdmin" example:"false" format:"bool"`
 }
 
 // Login godoc
 //
-//	@Summary		Авторизация пользователя
-//	@Description	Метод для авторизации пользователя
+//	@Summary		Вход в аккаунт пользователя
+//	@Description	Метод для входа в аккаунт пользователя
 //	@Tags			auth
-//	@Success		200	{string} string "Сервис жив"
-//	@Failure		404	"Сервис мертв"
+//	@Param			loginRequest	body		loginRequest			true	"Вход пользователя"
+//	@Success		200				{object}	loginResponse			"Пользователь успешно авторизовался"
+//	@Failure		400				{object}	http.StatusBadRequest	"Некорректное тело запроса"
+//	@Failure		401				{object}	http.StatusUnauthorized	"Вход неуспешен"
 //	@Router			/login [post]
 func (a *AuthController) Login(c *gin.Context) {
 	var req loginRequest
@@ -118,16 +133,22 @@ func (a *AuthController) Login(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"accessToken":  tokens.AccessToken,
-		"refreshToken": tokens.RefreshToken,
-		"isAdmin":      tokens.IsAdmin,
+	c.JSON(http.StatusOK, loginResponse{
+		AccessToken:  tokens.AccessToken,
+		RefreshToken: tokens.RefreshToken,
+		IsAdmin:      tokens.IsAdmin,
 	})
 }
 
 type refreshTokensRequest struct {
-	AccessToken  string `json:"accessToken"`
-	RefreshToken string `json:"refreshToken"`
+	AccessToken  string `json:"accessToken" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2IiwiaWF0IjoxNzI1NzE4NTc2fQ.RdcJHE8TULJKW-mVyn-0OBL_O_kmISrFNuK6E8FeRSs"`
+	RefreshToken string `json:"refreshToken" example:"c8edc98acee4d6243add4e59f8fd46d6a7f150831d74f0feb3a10144cbe0c032"`
+}
+
+type refreshTokensResponse struct {
+	AccessToken  string `json:"accessToken" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2IiwiaWF0IjoxNzI1NzE4NTc2fQ.RdcJHE8TULJKW-mVyn-0OBL_O_kmISrFNuK6E8FeRSs"`
+	RefreshToken string `json:"refreshToken" example:"c8edc98acee4d6243add4e59f8fd46d6a7f150831d74f0feb3a10144cbe0c032"`
+	IsAdmin      bool   `json:"isAdmin" example:"false" format:"bool"`
 }
 
 // RefreshTokens godoc
@@ -135,8 +156,10 @@ type refreshTokensRequest struct {
 //	@Summary		Обновление токенов доступа
 //	@Description	Метод для обновления токенов доступа пользователя
 //	@Tags			auth
-//	@Success		200	{string} string "Сервис жив"
-//	@Failure		404	"Сервис мертв"
+//	@Param			refreshTokensRequest	body		refreshTokensRequest	true	"Обновление токенов доступа"
+//	@Success		200						{object}	refreshTokensResponse	"Токены успешно обновлены"
+//	@Failure		400						{object}	http.StatusBadRequest	"Некорректное тело запроса"
+//	@Failure		401						{object}	http.StatusUnauthorized	"Вход неуспешен"
 //	@Router			/refresh [post]
 func (a *AuthController) RefreshTokens(c *gin.Context) {
 	var req refreshTokensRequest
@@ -175,9 +198,9 @@ func (a *AuthController) RefreshTokens(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"accessToken":  tokens.AccessToken,
-		"refreshToken": tokens.RefreshToken,
-		"isAdmin":      tokens.IsAdmin,
+	c.JSON(http.StatusOK, refreshTokensResponse{
+		AccessToken:  tokens.AccessToken,
+		RefreshToken: tokens.RefreshToken,
+		IsAdmin:      tokens.IsAdmin,
 	})
 }

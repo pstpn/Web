@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
@@ -23,6 +24,7 @@ type Controller struct {
 func NewRouter(handler *gin.Engine) *Controller {
 	handler.Use(gin.Logger())
 	handler.Use(gin.Recovery())
+	handler.Use(cors.Default())
 
 	// Swagger v1 settings
 	docs.SwaggerInfo.BasePath = "/api/v1"
@@ -54,8 +56,8 @@ func healthCheck(ctx *gin.Context) {
 func (c *Controller) SetAuthRoute(l logger.Interface, authService service.AuthService) {
 	a := NewAuthController(l, authService)
 
-	c.routerGroup.POST("/login", a.Login)
 	c.routerGroup.POST("/register", a.Register)
+	c.routerGroup.POST("/login", a.Login)
 	c.routerGroup.POST("/refresh", a.RefreshTokens)
 }
 

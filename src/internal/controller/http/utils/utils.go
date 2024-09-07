@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
@@ -54,36 +53,4 @@ func parseAuthHeader(c *gin.Context) (string, error) {
 	}
 
 	return headerParts[1], nil
-}
-
-type Field struct {
-	Type  string `json:"type"`
-	Value string `json:"value"`
-}
-
-func ModelToFields(documentFields []*model.Field) []Field {
-	fields := make([]Field, 0)
-	for _, documentField := range documentFields {
-		fields = append(fields, Field{
-			Type:  documentField.Type.String(),
-			Value: documentField.Value,
-		})
-	}
-	return fields
-}
-
-type Passage struct {
-	Type string `json:"type"`
-	Time string `json:"time"`
-}
-
-func ModelToPassages(passages []*model.Passage) []Passage {
-	p := make([]Passage, 0)
-	for _, passage := range passages {
-		p = append(p, Passage{
-			Type: passage.Type.String(),
-			Time: passage.Time.Add(3 * time.Hour).Format("15:04:05 (02.01.2006)"),
-		})
-	}
-	return p
 }

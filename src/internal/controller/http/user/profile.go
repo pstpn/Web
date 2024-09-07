@@ -1,10 +1,10 @@
 package user
 
 import (
-	"encoding/json"
 	"errors"
 	"io"
 	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
@@ -46,18 +46,27 @@ func NewProfileController(
 }
 
 type fillProfileRequest struct {
-	DocumentSerialNumber string            `json:"serialNumber"`
-	DocumentType         string            `json:"documentType"`
-	DocumentFields       []httputils.Field `json:"documentFields"`
+	DocumentSerialNumber string `json:"serialNumber"`
+	DocumentType         string `json:"documentType"`
+	DocumentFields       string `json:"documentFields"`
 }
+
+// https://restfulapi.net/resource-naming/#:~:text=than%20one%20archetype.-,2.1.1.%20document,-A%20document%20resource
 
 // FillProfile godoc
 //
 //	@Summary		Заполнение профиля
 //	@Description	Метод для заполнения профиля
 //	@Tags			employee
-//	@Success		200	{string} string "Сервис жив"
-//	@Failure		404	"Сервис мертв"
+//	@Accept			mpfd
+//	@Accept			json
+//	@Param			profileData	formData	fillProfileRequest				true	"Заполнения профиля пользователя"
+//	@Param			image		formData	file							true	"Заполнения профиля пользователя"
+//	@Success		201			{string}	string							"Профиль успешно создан"
+//	@Failure		400			{object}	http.StatusBadRequest			"Некорректное тело запроса"
+//	@Failure		401			{object}	http.StatusUnauthorized			"Авторизация неуспешна"
+//	@Failure		500			{object}	http.StatusInternalServerError	"Внутренняя ошибка заполнения профиля"
+//	@Security		BearerAuth
 //	@Router			/profile [post]
 func (p *ProfileController) FillProfile(c *gin.Context) {
 	payload, err := httputils.VerifyAccessToken(c, p.l, p.authService)
@@ -78,25 +87,21 @@ func (p *ProfileController) FillProfile(c *gin.Context) {
 		return
 	}
 
-	file, _, err := c.Request.FormFile("profileData")
-	if err != nil {
-		p.l.Errorf("failed to parse profile data: %s", err.Error())
-		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Incorrect profile data"})
-		return
-	}
-	defer file.Close()
-
-	data, err := io.ReadAll(file)
+	err = c.Request.ParseForm()
 	if err != nil {
 		p.l.Errorf("failed to read profile data: %s", err.Error())
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Incorrect profile data"})
 		return
 	}
+	data := c.Request.Form
 
-	var req fillProfileRequest
-	err = json.Unmarshal(data, &req)
-	if err != nil {
-		p.l.Errorf("failed to decode profile data: %s", err.Error())
+	req := fillProfileRequest{
+		DocumentSerialNumber: data.Get("serialNumber"),
+		DocumentType:         data.Get("documentType"),
+		DocumentFields:       data.Get("documentFields"),
+	}
+	if req.DocumentFields == "" || req.DocumentType == "" || req.DocumentSerialNumber == "" {
+		p.l.Errorf("failed to decode profile data: empty field")
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Incorrect profile data"})
 		return
 	}
@@ -112,11 +117,12 @@ func (p *ProfileController) FillProfile(c *gin.Context) {
 		return
 	}
 
-	for _, newField := range req.DocumentFields {
+	for _, newField := range strings.Split(req.DocumentFields, ";") {
+		parsedField := strings.Split(newField, ",")
 		_, err = p.fieldService.CreateDocumentField(c.Request.Context(), &dto.CreateDocumentFieldRequest{
 			DocumentID: document.ID.Int(),
-			Value:      newField.Value,
-			Type:       model.ToFieldTypeFromString(newField.Type).Int(),
+			Value:      parsedField[1],
+			Type:       model.ToFieldTypeFromString(parsedField[0]).Int(),
 		})
 		if err != nil {
 			p.l.Errorf("failed to create document field: %s", err.Error())
@@ -159,13 +165,25 @@ func (p *ProfileController) FillProfile(c *gin.Context) {
 	c.Status(http.StatusCreated)
 }
 
+type getProfileResponse struct {
+	IsConfirmed    bool                   `json:"isConfirmed"`
+	CreatedAt      string                 `json:"createdAt"`
+	DocumentType   string                 `json:"documentType"`
+	SerialNumber   string                 `json:"serialNumber"`
+	DocumentFields []*model.KeyValueField `json:"documentFields"`
+}
+
 // GetProfile godoc
 //
 //	@Summary		Получение профиля
 //	@Description	Метод для получения профиля
 //	@Tags			employee
-//	@Success		200	{string} string "Сервис жив"
-//	@Failure		404	"Сервис мертв"
+//	@Success		200	{object}	getProfileResponse				"Профиль успешно получен"
+//	@Failure		400	{object}	http.StatusBadRequest			"Некорректное тело запроса"
+//	@Failure		401	{object}	http.StatusUnauthorized			"Авторизация неуспешна"
+//	@Failure		404	{object}	http.StatusNotFound				"Профиль не найден"
+//	@Failure		500	{object}	http.StatusInternalServerError	"Внутренняя ошибка заполнения профиля"
+//	@Security		BearerAuth
 //	@Router			/profile [get]
 func (p *ProfileController) GetProfile(c *gin.Context) {
 	payload, err := httputils.VerifyAccessToken(c, p.l, p.authService)
@@ -209,12 +227,12 @@ func (p *ProfileController) GetProfile(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"isConfirmed":    infoCard.IsConfirmed,
-		"createdAt":      infoCard.CreatedDate,
-		"documentType":   document.Type.String(),
-		"serialNumber":   document.SerialNumber,
-		"documentFields": httputils.ModelToFields(documentFields),
+	c.JSON(http.StatusOK, getProfileResponse{
+		IsConfirmed:    infoCard.IsConfirmed,
+		CreatedAt:      infoCard.CreatedDate.String(),
+		DocumentType:   document.Type.String(),
+		SerialNumber:   document.SerialNumber,
+		DocumentFields: model.ModelToKeyValue(documentFields),
 	})
 }
 
@@ -223,8 +241,13 @@ func (p *ProfileController) GetProfile(c *gin.Context) {
 //	@Summary		Получение фотографии своего профиля
 //	@Description	Метод для получения фотографии своего профиля
 //	@Tags			employee
-//	@Success		200	{string} string "Сервис жив"
-//	@Failure		404	"Сервис мертв"
+//	@Produce		jpeg
+//	@Produce		json
+//	@Success		200	{string}	string							"Фотография успешно получена"
+//	@Failure		400	{object}	http.StatusBadRequest			"Некорректное тело запроса"
+//	@Failure		401	{object}	http.StatusUnauthorized			"Авторизация неуспешна"
+//	@Failure		500	{object}	http.StatusInternalServerError	"Внутренняя ошибка получения фотографии"
+//	@Security		BearerAuth
 //	@Router			/employee-photo [get]
 func (p *ProfileController) GetEmployeePhoto(c *gin.Context) {
 	payload, err := httputils.VerifyAccessToken(c, p.l, p.authService)
@@ -257,4 +280,5 @@ func (p *ProfileController) GetEmployeePhoto(c *gin.Context) {
 	}
 
 	c.Data(http.StatusOK, "image/jpeg", photoData.Data)
+	c.JSON(http.StatusOK, "OK")
 }

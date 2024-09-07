@@ -9,6 +9,7 @@ import (
 	"github.com/jackc/pgx/v5"
 
 	httputils "course/internal/controller/http/utils"
+	"course/internal/model"
 	"course/internal/service"
 	"course/internal/service/dto"
 	"course/pkg/logger"
@@ -45,13 +46,23 @@ func NewInfoCardController(
 	}
 }
 
+type listFullInfoCardsResponse struct {
+	InfoCards []*model.FullInfoCard `json:"infoCards"`
+}
+
 // ListFullInfoCards godoc
 //
 //	@Summary		Получение коллекции информационных карточек
 //	@Description	Метод для получения коллекции информационных карточек
 //	@Tags			admin
-//	@Success		200	{string} string "Сервис жив"
-//	@Failure		404	"Сервис мертв"
+//	@Param			pattern	query		string							false	"Значение для фильтрации"
+//	@Param			field	query		string							false	"Поле для фильтрации и сортировки"
+//	@Param			sort	query		string							false	"Направление сортировки"
+//	@Success		200		{object}	listFullInfoCardsResponse		"Информация о карточках успешно получена"
+//	@Failure		400		{object}	http.StatusBadRequest			"Некорректное тело запроса"
+//	@Failure		401		{object}	http.StatusUnauthorized			"Авторизация неуспешна"
+//	@Failure		500		{object}	http.StatusInternalServerError	"Внутренняя ошибка получения карточек пользователей"
+//	@Security		BearerAuth
 //	@Router			/infocards [get]
 func (i *InfoCardController) ListFullInfoCards(c *gin.Context) {
 	_, err := httputils.VerifyAccessToken(c, i.l, i.authService)
@@ -79,9 +90,12 @@ func (i *InfoCardController) ListFullInfoCards(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"infoCards": fullInfoCards,
-	})
+	c.JSON(http.StatusOK, listFullInfoCardsResponse{InfoCards: fullInfoCards})
+}
+
+type getFullInfoCardResponse struct {
+	Document *model.FullDocument   `json:"document"`
+	Passages []*model.ShortPassage `json:"passages"`
 }
 
 // GetFullInfoCard godoc
@@ -89,8 +103,13 @@ func (i *InfoCardController) ListFullInfoCards(c *gin.Context) {
 //	@Summary		Получение элемента коллекции информационных карточек
 //	@Description	Метод для получения элемента коллекции информационных карточек
 //	@Tags			admin
-//	@Success		200	{string} string "Сервис жив"
-//	@Failure		404	"Сервис мертв"
+//	@Param			id	path		string							true	"Идентификатор информационной карточки"
+//	@Success		200	{object}	getFullInfoCardResponse			"Информация о карточке успешно получена"
+//	@Failure		400	{object}	http.StatusBadRequest			"Некорректное тело запроса"
+//	@Failure		401	{object}	http.StatusUnauthorized			"Авторизация неуспешна"
+//	@Failure		404	{object}	http.StatusNotFound				"Карточка не найдена"
+//	@Failure		500	{object}	http.StatusInternalServerError	"Внутренняя ошибка получения карточки пользователя"
+//	@Security		BearerAuth
 //	@Router			/infocards/{id} [get]
 func (i *InfoCardController) GetFullInfoCard(c *gin.Context) {
 	_, err := httputils.VerifyAccessToken(c, i.l, i.authService)
@@ -135,15 +154,15 @@ func (i *InfoCardController) GetFullInfoCard(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"document": gin.H{
-			"data": gin.H{
-				"documentType": document.Type.String(),
-				"serialNumber": document.SerialNumber,
+	c.JSON(http.StatusOK, getFullInfoCardResponse{
+		Document: &model.FullDocument{
+			Data: &model.DocumentData{
+				DocumentType: document.Type.String(),
+				SerialNumber: document.SerialNumber,
 			},
-			"fields": httputils.ModelToFields(documentFields),
+			Fields: model.ModelToKeyValue(documentFields),
 		},
-		"passages": httputils.ModelToPassages(passages),
+		Passages: model.ModelToShortPassages(passages),
 	})
 }
 
@@ -152,8 +171,11 @@ func (i *InfoCardController) GetFullInfoCard(c *gin.Context) {
 //	@Summary		Подтверждение информационной карточки сотрудника
 //	@Description	Метод для подтверждения информационной карточки сотрудника
 //	@Tags			admin
-//	@Success		200	{string} string "Сервис жив"
-//	@Failure		404	"Сервис мертв"
+//	@Param			id	path		string					true	"Идентификатор информационной карточки"
+//	@Success		200	{string}	string					"Информация о карточке успешно подтверждена"
+//	@Failure		400	{object}	http.StatusBadRequest	"Некорректное тело запроса"
+//	@Failure		401	{object}	http.StatusUnauthorized	"Авторизация неуспешна"
+//	@Security		BearerAuth
 //	@Router			/infocards/{id} [patch]
 func (i *InfoCardController) ConfirmEmployeeInfoCard(c *gin.Context) {
 	_, err := httputils.VerifyAccessToken(c, i.l, i.authService)
@@ -178,7 +200,7 @@ func (i *InfoCardController) ConfirmEmployeeInfoCard(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{})
+	c.JSON(http.StatusOK, "OK")
 }
 
 // GetEmployeeInfoCardPhoto godoc
@@ -186,8 +208,15 @@ func (i *InfoCardController) ConfirmEmployeeInfoCard(c *gin.Context) {
 //	@Summary		Получение элемента коллекции фотографий сотрудников
 //	@Description	Метод для получения элемента коллекции фотографий сотрудников
 //	@Tags			admin
-//	@Success		200	{string} string "Сервис жив"
-//	@Failure		404	"Сервис мертв"
+//	@Produce		jpeg
+//	@Produce		json
+//	@Param			id	path		string							true	"Идентификатор информационной карточки"
+//	@Success		200	{string}	string							"Фотография сотрудника успешно получена"
+//	@Failure		400	{object}	http.StatusBadRequest			"Некорректное тело запроса"
+//	@Failure		401	{object}	http.StatusUnauthorized			"Авторизация неуспешна"
+//	@Failure		404	{object}	http.StatusNotFound				"Карточка не найдена"
+//	@Failure		500	{object}	http.StatusInternalServerError	"Внутренняя ошибка получения фотографии пользователя"
+//	@Security		BearerAuth
 //	@Router			/infocard-photos/{id} [get]
 func (i *InfoCardController) GetEmployeeInfoCardPhoto(c *gin.Context) {
 	_, err := httputils.VerifyAccessToken(c, i.l, i.authService)
@@ -226,4 +255,5 @@ func (i *InfoCardController) GetEmployeeInfoCardPhoto(c *gin.Context) {
 	}
 
 	c.Data(http.StatusOK, "image/jpeg", photoData.Data)
+	c.JSON(http.StatusOK, "OK")
 }

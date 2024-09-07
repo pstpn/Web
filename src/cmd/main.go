@@ -20,10 +20,13 @@ import (
 	"course/pkg/storage/postgres"
 )
 
-//	@title			Идентификация на КПП
-//	@version		1.0
-//	@description	В основе лежит мой курсовой проект 😎
-//	@BasePath		/api/v1
+// @title						Идентификация на КПП
+// @version					1.0
+// @description				# _В основе лежит мой курсовой проект 😎_
+// @BasePath					/api/v1
+// @securityDefinitions.apikey	BearerAuth
+// @in							header
+// @name						Authorization
 func main() {
 	// Read config
 	c, err := config.NewConfig()

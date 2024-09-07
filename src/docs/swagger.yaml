@@ -1,20 +1,232 @@
 basePath: /api/v1
+definitions:
+  admin.createPassageRequest:
+    properties:
+      documentType:
+        type: string
+      infoCardID:
+        type: integer
+      time:
+        type: string
+    type: object
+  admin.getFullInfoCardResponse:
+    properties:
+      document:
+        $ref: '#/definitions/model.FullDocument'
+      passages:
+        items:
+          $ref: '#/definitions/model.ShortPassage'
+        type: array
+    type: object
+  admin.listFullInfoCardsResponse:
+    properties:
+      infoCards:
+        items:
+          $ref: '#/definitions/model.FullInfoCard'
+        type: array
+    type: object
+  http.StatusBadRequest:
+    properties:
+      error:
+        example: Incorrect request body date of birth
+        type: string
+    type: object
+  http.StatusInternalServerError:
+    properties:
+      error:
+        example: Failed to register employee
+        type: string
+    type: object
+  http.StatusNotFound:
+    properties:
+      error:
+        example: Failed to get info card document
+        type: string
+    type: object
+  http.StatusUnauthorized:
+    properties:
+      error:
+        example: Cant login employee
+        type: string
+    type: object
+  http.loginRequest:
+    properties:
+      password:
+        example: "123"
+        type: string
+      phoneNumber:
+        example: "+71234567890"
+        type: string
+    type: object
+  http.loginResponse:
+    properties:
+      accessToken:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2IiwiaWF0IjoxNzI1NzE4NTc2fQ.RdcJHE8TULJKW-mVyn-0OBL_O_kmISrFNuK6E8FeRSs
+        type: string
+      isAdmin:
+        example: false
+        format: bool
+        type: boolean
+      refreshToken:
+        example: c8edc98acee4d6243add4e59f8fd46d6a7f150831d74f0feb3a10144cbe0c032
+        type: string
+    type: object
+  http.refreshTokensRequest:
+    properties:
+      accessToken:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2IiwiaWF0IjoxNzI1NzE4NTc2fQ.RdcJHE8TULJKW-mVyn-0OBL_O_kmISrFNuK6E8FeRSs
+        type: string
+      refreshToken:
+        example: c8edc98acee4d6243add4e59f8fd46d6a7f150831d74f0feb3a10144cbe0c032
+        type: string
+    type: object
+  http.refreshTokensResponse:
+    properties:
+      accessToken:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2IiwiaWF0IjoxNzI1NzE4NTc2fQ.RdcJHE8TULJKW-mVyn-0OBL_O_kmISrFNuK6E8FeRSs
+        type: string
+      isAdmin:
+        example: false
+        format: bool
+        type: boolean
+      refreshToken:
+        example: c8edc98acee4d6243add4e59f8fd46d6a7f150831d74f0feb3a10144cbe0c032
+        type: string
+    type: object
+  http.registerRequest:
+    properties:
+      companyID:
+        example: 1
+        type: integer
+      dateOfBirth:
+        example: 31.03.2004
+        type: string
+      name:
+        example: Степа
+        type: string
+      password:
+        example: "123"
+        type: string
+      phoneNumber:
+        example: "+71234567890"
+        type: string
+      post:
+        example: Сотрудник
+        type: string
+      surname:
+        example: Степик
+        type: string
+    type: object
+  http.registerResponse:
+    properties:
+      accessToken:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2IiwiaWF0IjoxNzI1NzE4NTc2fQ.RdcJHE8TULJKW-mVyn-0OBL_O_kmISrFNuK6E8FeRSs
+        type: string
+      isAdmin:
+        example: false
+        format: bool
+        type: boolean
+      refreshToken:
+        example: c8edc98acee4d6243add4e59f8fd46d6a7f150831d74f0feb3a10144cbe0c032
+        type: string
+    type: object
+  model.DocumentData:
+    properties:
+      documentType:
+        type: string
+      serialNumber:
+        type: string
+    type: object
+  model.FullDocument:
+    properties:
+      data:
+        $ref: '#/definitions/model.DocumentData'
+      fields:
+        items:
+          $ref: '#/definitions/model.KeyValueField'
+        type: array
+    type: object
+  model.FullInfoCard:
+    properties:
+      companyID:
+        type: integer
+      createdDate:
+        type: string
+      createdEmployeeID:
+        type: integer
+      dateOfBirth:
+        type: string
+      fullName:
+        type: string
+      id:
+        type: integer
+      isConfirmed:
+        type: boolean
+      phoneNumber:
+        type: string
+      post:
+        type: string
+    type: object
+  model.KeyValueField:
+    properties:
+      type:
+        type: string
+      value:
+        type: string
+    type: object
+  model.ShortPassage:
+    properties:
+      time:
+        type: string
+      type:
+        type: string
+    type: object
+  user.getProfileResponse:
+    properties:
+      createdAt:
+        type: string
+      documentFields:
+        items:
+          $ref: '#/definitions/model.KeyValueField'
+        type: array
+      documentType:
+        type: string
+      isConfirmed:
+        type: boolean
+      serialNumber:
+        type: string
+    type: object
 info:
   contact: {}
-  description: "В основе лежит мой курсовой проект \U0001F60E"
+  description: "# _В основе лежит мой курсовой проект \U0001F60E_"
   title: Идентификация на КПП
   version: "1.0"
 paths:
   /employee-photo:
     get:
       description: Метод для получения фотографии своего профиля
+      produces:
+      - image/jpeg
+      - application/json
       responses:
         "200":
-          description: Сервис жив
+          description: Фотография успешно получена
           schema:
             type: string
-        "404":
-          description: Сервис мертв
+        "400":
+          description: Некорректное тело запроса
+          schema:
+            $ref: '#/definitions/http.StatusBadRequest'
+        "401":
+          description: Авторизация неуспешна
+          schema:
+            $ref: '#/definitions/http.StatusUnauthorized'
+        "500":
+          description: Внутренняя ошибка получения фотографии
+          schema:
+            $ref: '#/definitions/http.StatusInternalServerError'
+      security:
+      - BearerAuth: []
       summary: Получение фотографии своего профиля
       tags:
       - employee
@@ -34,77 +246,199 @@ paths:
   /infocard-photos/{id}:
     get:
       description: Метод для получения элемента коллекции фотографий сотрудников
+      parameters:
+      - description: Идентификатор информационной карточки
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - image/jpeg
+      - application/json
       responses:
         "200":
-          description: Сервис жив
+          description: Фотография сотрудника успешно получена
           schema:
             type: string
+        "400":
+          description: Некорректное тело запроса
+          schema:
+            $ref: '#/definitions/http.StatusBadRequest'
+        "401":
+          description: Авторизация неуспешна
+          schema:
+            $ref: '#/definitions/http.StatusUnauthorized'
         "404":
-          description: Сервис мертв
+          description: Карточка не найдена
+          schema:
+            $ref: '#/definitions/http.StatusNotFound'
+        "500":
+          description: Внутренняя ошибка получения фотографии пользователя
+          schema:
+            $ref: '#/definitions/http.StatusInternalServerError'
+      security:
+      - BearerAuth: []
       summary: Получение элемента коллекции фотографий сотрудников
       tags:
       - admin
   /infocards:
     get:
       description: Метод для получения коллекции информационных карточек
+      parameters:
+      - description: Значение для фильтрации
+        in: query
+        name: pattern
+        type: string
+      - description: Поле для фильтрации и сортировки
+        in: query
+        name: field
+        type: string
+      - description: Направление сортировки
+        in: query
+        name: sort
+        type: string
       responses:
         "200":
-          description: Сервис жив
+          description: Информация о карточках успешно получена
           schema:
-            type: string
-        "404":
-          description: Сервис мертв
+            $ref: '#/definitions/admin.listFullInfoCardsResponse'
+        "400":
+          description: Некорректное тело запроса
+          schema:
+            $ref: '#/definitions/http.StatusBadRequest'
+        "401":
+          description: Авторизация неуспешна
+          schema:
+            $ref: '#/definitions/http.StatusUnauthorized'
+        "500":
+          description: Внутренняя ошибка получения карточек пользователей
+          schema:
+            $ref: '#/definitions/http.StatusInternalServerError'
+      security:
+      - BearerAuth: []
       summary: Получение коллекции информационных карточек
       tags:
       - admin
   /infocards/{id}:
     get:
       description: Метод для получения элемента коллекции информационных карточек
+      parameters:
+      - description: Идентификатор информационной карточки
+        in: path
+        name: id
+        required: true
+        type: string
       responses:
         "200":
-          description: Сервис жив
+          description: Информация о карточке успешно получена
           schema:
-            type: string
+            $ref: '#/definitions/admin.getFullInfoCardResponse'
+        "400":
+          description: Некорректное тело запроса
+          schema:
+            $ref: '#/definitions/http.StatusBadRequest'
+        "401":
+          description: Авторизация неуспешна
+          schema:
+            $ref: '#/definitions/http.StatusUnauthorized'
         "404":
-          description: Сервис мертв
+          description: Карточка не найдена
+          schema:
+            $ref: '#/definitions/http.StatusNotFound'
+        "500":
+          description: Внутренняя ошибка получения карточки пользователя
+          schema:
+            $ref: '#/definitions/http.StatusInternalServerError'
+      security:
+      - BearerAuth: []
       summary: Получение элемента коллекции информационных карточек
       tags:
       - admin
     patch:
       description: Метод для подтверждения информационной карточки сотрудника
+      parameters:
+      - description: Идентификатор информационной карточки
+        in: path
+        name: id
+        required: true
+        type: string
       responses:
         "200":
-          description: Сервис жив
+          description: Информация о карточке успешно подтверждена
           schema:
             type: string
-        "404":
-          description: Сервис мертв
+        "400":
+          description: Некорректное тело запроса
+          schema:
+            $ref: '#/definitions/http.StatusBadRequest'
+        "401":
+          description: Авторизация неуспешна
+          schema:
+            $ref: '#/definitions/http.StatusUnauthorized'
+      security:
+      - BearerAuth: []
       summary: Подтверждение информационной карточки сотрудника
       tags:
       - admin
   /login:
     post:
-      description: Метод для авторизации пользователя
+      description: Метод для входа в аккаунт пользователя
+      parameters:
+      - description: Вход пользователя
+        in: body
+        name: loginRequest
+        required: true
+        schema:
+          $ref: '#/definitions/http.loginRequest'
       responses:
         "200":
-          description: Сервис жив
+          description: Пользователь успешно авторизовался
           schema:
-            type: string
-        "404":
-          description: Сервис мертв
-      summary: Авторизация пользователя
+            $ref: '#/definitions/http.loginResponse'
+        "400":
+          description: Некорректное тело запроса
+          schema:
+            $ref: '#/definitions/http.StatusBadRequest'
+        "401":
+          description: Вход неуспешен
+          schema:
+            $ref: '#/definitions/http.StatusUnauthorized'
+      summary: Вход в аккаунт пользователя
       tags:
       - auth
   /passages:
     post:
       description: Метод для записи о проходе через КПП
+      parameters:
+      - description: Занесение информации о проходе через КПП
+        in: body
+        name: createPassageRequest
+        required: true
+        schema:
+          $ref: '#/definitions/admin.createPassageRequest'
       responses:
-        "200":
-          description: Сервис жив
+        "201":
+          description: Данные успешно занесены
           schema:
             type: string
+        "400":
+          description: Некорректное тело запроса
+          schema:
+            $ref: '#/definitions/http.StatusBadRequest'
+        "401":
+          description: Авторизация неуспешна
+          schema:
+            $ref: '#/definitions/http.StatusUnauthorized'
         "404":
-          description: Сервис мертв
+          description: Карточка не найдена
+          schema:
+            $ref: '#/definitions/http.StatusNotFound'
+        "500":
+          description: Внутренняя ошибка занесения информации о проходе через КПП
+          schema:
+            $ref: '#/definitions/http.StatusInternalServerError'
+      security:
+      - BearerAuth: []
       summary: Запись информации о проходе через КПП
       tags:
       - admin
@@ -113,50 +447,127 @@ paths:
       description: Метод для получения профиля
       responses:
         "200":
-          description: Сервис жив
+          description: Профиль успешно получен
           schema:
-            type: string
+            $ref: '#/definitions/user.getProfileResponse'
+        "400":
+          description: Некорректное тело запроса
+          schema:
+            $ref: '#/definitions/http.StatusBadRequest'
+        "401":
+          description: Авторизация неуспешна
+          schema:
+            $ref: '#/definitions/http.StatusUnauthorized'
         "404":
-          description: Сервис мертв
+          description: Профиль не найден
+          schema:
+            $ref: '#/definitions/http.StatusNotFound'
+        "500":
+          description: Внутренняя ошибка заполнения профиля
+          schema:
+            $ref: '#/definitions/http.StatusInternalServerError'
+      security:
+      - BearerAuth: []
       summary: Получение профиля
       tags:
       - employee
     post:
+      consumes:
+      - multipart/form-data
+      - application/json
       description: Метод для заполнения профиля
+      parameters:
+      - in: formData
+        name: documentFields
+        type: string
+      - in: formData
+        name: documentType
+        type: string
+      - in: formData
+        name: serialNumber
+        type: string
+      - description: Заполнения профиля пользователя
+        in: formData
+        name: image
+        required: true
+        type: file
       responses:
-        "200":
-          description: Сервис жив
+        "201":
+          description: Профиль успешно создан
           schema:
             type: string
-        "404":
-          description: Сервис мертв
+        "400":
+          description: Некорректное тело запроса
+          schema:
+            $ref: '#/definitions/http.StatusBadRequest'
+        "401":
+          description: Авторизация неуспешна
+          schema:
+            $ref: '#/definitions/http.StatusUnauthorized'
+        "500":
+          description: Внутренняя ошибка заполнения профиля
+          schema:
+            $ref: '#/definitions/http.StatusInternalServerError'
+      security:
+      - BearerAuth: []
       summary: Заполнение профиля
       tags:
       - employee
   /refresh:
     post:
       description: Метод для обновления токенов доступа пользователя
+      parameters:
+      - description: Обновление токенов доступа
+        in: body
+        name: refreshTokensRequest
+        required: true
+        schema:
+          $ref: '#/definitions/http.refreshTokensRequest'
       responses:
         "200":
-          description: Сервис жив
+          description: Токены успешно обновлены
           schema:
-            type: string
-        "404":
-          description: Сервис мертв
+            $ref: '#/definitions/http.refreshTokensResponse'
+        "400":
+          description: Некорректное тело запроса
+          schema:
+            $ref: '#/definitions/http.StatusBadRequest'
+        "401":
+          description: Вход неуспешен
+          schema:
+            $ref: '#/definitions/http.StatusUnauthorized'
       summary: Обновление токенов доступа
       tags:
       - auth
   /register:
     post:
       description: Метод для регистрации пользователя
+      parameters:
+      - description: Регистрация пользователя
+        in: body
+        name: registerRequest
+        required: true
+        schema:
+          $ref: '#/definitions/http.registerRequest'
       responses:
         "200":
-          description: Сервис жив
+          description: Пользователь успешно зарегистрирован
           schema:
-            type: string
-        "404":
-          description: Сервис мертв
+            $ref: '#/definitions/http.registerResponse'
+        "400":
+          description: Некорректное тело запроса
+          schema:
+            $ref: '#/definitions/http.StatusBadRequest'
+        "500":
+          description: Внутренняя ошибка регистрации пользователя
+          schema:
+            $ref: '#/definitions/http.StatusInternalServerError'
       summary: Регистрация пользователя
       tags:
       - auth
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

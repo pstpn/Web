@@ -47,8 +47,13 @@ type createPassageRequest struct {
 //	@Summary		Запись информации о проходе через КПП
 //	@Description	Метод для записи о проходе через КПП
 //	@Tags			admin
-//	@Success		200	{string} string "Сервис жив"
-//	@Failure		404	"Сервис мертв"
+//	@Param			createPassageRequest	body		createPassageRequest			true	"Занесение информации о проходе через КПП"
+//	@Success		201						{string}	string							"Данные успешно занесены"
+//	@Failure		400						{object}	http.StatusBadRequest			"Некорректное тело запроса"
+//	@Failure		401						{object}	http.StatusUnauthorized			"Авторизация неуспешна"
+//	@Failure		404						{object}	http.StatusNotFound				"Карточка не найдена"
+//	@Failure		500						{object}	http.StatusInternalServerError	"Внутренняя ошибка занесения информации о проходе через КПП"
+//	@Security		BearerAuth
 //	@Router			/passages [post]
 func (p *PassageController) CreatePassage(c *gin.Context) {
 	_, err := httputils.VerifyAccessToken(c, p.l, p.authService)
@@ -90,5 +95,5 @@ func (p *PassageController) CreatePassage(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{})
+	c.JSON(http.StatusCreated, "OK")
 }

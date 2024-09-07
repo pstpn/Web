@@ -18,4 +18,7 @@ fmt-swag:
 
 swagger: fmt-swag gen-swag convert-swag-to-3.0
 
-.PHONY: go-tests_template mockery_template go-test_command swag-gen convert-swag-to-3.0 swagger fmt-swag all
+run: swagger
+	go run cmd/main.go
+
+.PHONY: go-tests_template mockery_template go-test_command swag-gen convert-swag-to-3.0 swagger fmt-swag run
