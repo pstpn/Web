@@ -3,62 +3,136 @@
 package model
 
 import (
-	"fmt"
-	"io"
-	"strconv"
 	"time"
 )
 
-type Passage struct {
-	ID           string      `json:"id"`
-	CheckpointID string      `json:"checkpointID"`
-	DocumentID   string      `json:"documentID"`
-	PassageType  PassageType `json:"passageType"`
-	Time         time.Time   `json:"time"`
+type Mutation struct {
 }
 
 type Query struct {
 }
 
-type PassageType string
-
-const (
-	PassageTypeEntrance           PassageType = "Entrance"
-	PassageTypeExit               PassageType = "Exit"
-	PassageTypeUnknownPassageType PassageType = "UnknownPassageType"
-)
-
-var AllPassageType = []PassageType{
-	PassageTypeEntrance,
-	PassageTypeExit,
-	PassageTypeUnknownPassageType,
+type ConfirmEmployeeInfoCardRequest struct {
+	ID string `json:"id"`
 }
 
-func (e PassageType) IsValid() bool {
-	switch e {
-	case PassageTypeEntrance, PassageTypeExit, PassageTypeUnknownPassageType:
-		return true
-	}
-	return false
+type CreatePassageRequest struct {
+	InfoCardID   string    `json:"infoCardID"`
+	DocumentType string    `json:"documentType"`
+	Time         time.Time `json:"time"`
 }
 
-func (e PassageType) String() string {
-	return string(e)
+type DocumentData struct {
+	DocumentType string `json:"documentType"`
+	SerialNumber string `json:"serialNumber"`
 }
 
-func (e *PassageType) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = PassageType(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid PassageType", str)
-	}
-	return nil
+type DocumentFull struct {
+	Data   *DocumentData     `json:"data"`
+	Fields []*KeyValueFields `json:"fields,omitempty"`
 }
 
-func (e PassageType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
+type FillProfileRequest struct {
+	DocumentSerialNumber string  `json:"documentSerialNumber"`
+	DocumentType         string  `json:"documentType"`
+	DocumentFields       *string `json:"documentFields,omitempty"`
+}
+
+type GetEmployeeInfoCardPhotoRequest struct {
+	ID string `json:"id"`
+}
+
+type GetEmployeePhotoRequest struct {
+	InfoCardID string `json:"infoCardID"`
+}
+
+type GetFullInfoCardRequest struct {
+	ID string `json:"id"`
+}
+
+type GetFullInfoCardResponse struct {
+	Document *DocumentFull   `json:"document,omitempty"`
+	Passages []*PassageShort `json:"passages,omitempty"`
+}
+
+type GetProfileRequest struct {
+	InfoCardID string `json:"infoCardID"`
+}
+
+type GetProfileResponse struct {
+	IsConfirmed    bool              `json:"isConfirmed"`
+	CreatedAt      string            `json:"createdAt"`
+	DocumentType   string            `json:"documentType"`
+	SerialNumber   string            `json:"serialNumber"`
+	DocumentFields []*KeyValueFields `json:"documentFields,omitempty"`
+}
+
+type InfoCardFull struct {
+	ID                string    `json:"id"`
+	CreatedEmployeeID string    `json:"createdEmployeeID"`
+	IsConfirmed       bool      `json:"isConfirmed"`
+	CreatedDate       time.Time `json:"createdDate"`
+	FullName          string    `json:"fullName"`
+	PhoneNumber       string    `json:"phoneNumber"`
+	CompanyID         string    `json:"companyID"`
+	Post              string    `json:"post"`
+	DateOfBirth       time.Time `json:"dateOfBirth"`
+}
+
+type KeyValueFields struct {
+	Type  string `json:"type"`
+	Value string `json:"value"`
+}
+
+type ListFullInfoCardsRequest struct {
+	Pattern *string `json:"pattern,omitempty"`
+	Field   *string `json:"field,omitempty"`
+	Sort    *string `json:"sort,omitempty"`
+}
+
+type ListFullInfoCardsResponse struct {
+	InfoCards []*InfoCardFull `json:"infoCards,omitempty"`
+}
+
+type LoginRequest struct {
+	PhoneNumber string `json:"phoneNumber"`
+	Password    string `json:"password"`
+}
+
+type LoginResponse struct {
+	AccessToken  string `json:"accessToken"`
+	RefreshToken string `json:"refreshToken"`
+	IsAdmin      bool   `json:"isAdmin"`
+}
+
+type PassageShort struct {
+	Type string `json:"type"`
+	Time string `json:"time"`
+}
+
+type RefreshTokensRequest struct {
+	AccessToken  string `json:"accessToken"`
+	RefreshToken string `json:"refreshToken"`
+}
+
+type RefreshTokensResponse struct {
+	AccessToken  string `json:"accessToken"`
+	RefreshToken string `json:"refreshToken"`
+	IsAdmin      bool   `json:"isAdmin"`
+}
+
+type RegisterRequest struct {
+	PhoneNumber string  `json:"phoneNumber"`
+	Name        string  `json:"name"`
+	Surname     string  `json:"surname"`
+	CompanyID   int     `json:"companyID"`
+	Post        *string `json:"post,omitempty"`
+	Password    string  `json:"password"`
+	DateOfBirth string  `json:"dateOfBirth"`
+}
+
+type RegisterResponse struct {
+	AccessToken  string `json:"accessToken"`
+	RefreshToken string `json:"refreshToken"`
+	IsAdmin      bool   `json:"isAdmin"`
 }

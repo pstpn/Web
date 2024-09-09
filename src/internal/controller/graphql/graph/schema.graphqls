@@ -1,22 +1,190 @@
 scalar Time
+scalar Null
+scalar directus_files
 
-type Passage {
+### Model types ###
+
+type keyValueFields {
+  type: String!
+  value: String!
+}
+
+type infoCardFull {
   id: ID!
-  checkpointID: ID!
-  documentID: ID!
-  passageType: PassageType!
+  createdEmployeeID: ID!
+  isConfirmed: Boolean!
+  createdDate: Time!
+
+  fullName: String!
+  phoneNumber: String!
+  companyID: ID!
+  post: String!
+  dateOfBirth: Time!
+}
+
+type documentData {
+  documentType: String!
+  serialNumber: String!
+}
+
+type documentFull {
+  data: documentData!
+  fields: [keyValueFields!]
+}
+
+type passageShort {
+  type: String!
+  time: String!
+}
+
+### Request and Response types ###
+
+input registerRequest {
+  phoneNumber: String!
+  name: String!
+  surname: String!
+  companyID: Int!
+  post: String
+  password: String!
+  dateOfBirth: String!
+}
+type registerResponse {
+  accessToken: String!
+  refreshToken: String!
+  isAdmin: Boolean!
+}
+
+input loginRequest {
+  phoneNumber: String!
+  password: String!
+}
+type loginResponse {
+  accessToken: String!
+  refreshToken: String!
+  isAdmin: Boolean!
+}
+
+input refreshTokensRequest {
+  accessToken: String!
+  refreshToken: String!
+}
+type refreshTokensResponse {
+  accessToken: String!
+  refreshToken: String!
+  isAdmin: Boolean!
+}
+
+input fillProfileRequest {
+  documentSerialNumber: String!
+  documentType: String!
+  documentFields: String
+}
+
+input getProfileRequest {
+  infoCardID: ID!
+}
+type getProfileResponse {
+  isConfirmed: Boolean!
+  createdAt: String!
+  documentType: String!
+  serialNumber: String!
+  documentFields: [keyValueFields!]
+}
+
+input getEmployeePhotoRequest {
+  infoCardID: ID!
+}
+
+input listFullInfoCardsRequest {
+  pattern: String
+  field: String
+  sort: String
+}
+type listFullInfoCardsResponse {
+  infoCards: [infoCardFull!]
+}
+
+input getFullInfoCardRequest {
+  id: ID!
+}
+type getFullInfoCardResponse {
+  document: documentFull
+  passages: [passageShort!]
+}
+
+input confirmEmployeeInfoCardRequest {
+  id: ID!
+}
+
+input getEmployeeInfoCardPhotoRequest {
+  id: ID!
+}
+
+input createPassageRequest {
+  infoCardID: ID!
+  documentType: String!
   time: Time!
 }
 
-enum PassageType {
-  Entrance
-  Exit
-  UnknownPassageType
-}
+### Query requests ###
 
 type Query {
   """
   Проверка на жизнеспособность
   """
   healthcheck: String
+
+  """
+  Получение профиля
+  """
+  getProfile(req: getProfileRequest!): getProfileResponse!
+  """
+  Получение фотографии своего профиля
+  """
+  getEmployeePhoto(req: getEmployeePhotoRequest!):  directus_files
+
+  """
+  Получение коллекции информационных карточек
+  """
+  listFullInfoCards(req: listFullInfoCardsRequest!): listFullInfoCardsResponse!
+  """
+  Получение элемента коллекции информационных карточек
+  """
+  getFullInfoCard(req: getFullInfoCardRequest!): getProfileResponse!
+  """
+  Получение элемента коллекции фотографий сотрудников
+  """
+  getEmployeeInfoCardPhoto(req: getEmployeeInfoCardPhotoRequest!): directus_files
+}
+
+### Mutation requests ###
+
+type Mutation {
+  """
+  Регистрация пользователя
+  """
+  register(req: registerRequest!): registerResponse!
+  """
+  Вход в аккаунт пользователя
+  """
+  login(req: loginRequest!): loginResponse!
+  """
+  Обновление токенов доступа
+  """
+  refreshTokens(req: refreshTokensRequest!): refreshTokensResponse!
+
+  """
+  Заполнение профиля
+  """
+  fillProfile(req: fillProfileRequest!): Null
+
+  """
+  Подтверждение информационной карточки сотрудника
+  """
+  confirmEmployeeInfoCard(req: confirmEmployeeInfoCardRequest!): Null
+
+  """
+  Запись информации о проходе через КПП
+  """
+  createPassage(req: createPassageRequest!): Null
 }

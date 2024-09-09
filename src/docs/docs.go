@@ -773,7 +773,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.DocumentData": {
+        "internal_model.DocumentData": {
             "type": "object",
             "properties": {
                 "documentType": {
@@ -788,7 +788,7 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/model.DocumentData"
+                    "$ref": "#/definitions/internal_model.DocumentData"
                 },
                 "fields": {
                     "type": "array",

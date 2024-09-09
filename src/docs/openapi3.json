@@ -1030,7 +1030,7 @@
           }
         }
       },
-      "model.DocumentData": {
+      "internal_model.DocumentData": {
         "type": "object",
         "properties": {
           "documentType": {
@@ -1045,7 +1045,7 @@
         "type": "object",
         "properties": {
           "data": {
-            "$ref": "#/components/schemas/model.DocumentData"
+            "$ref": "#/components/schemas/internal_model.DocumentData"
           },
           "fields": {
             "type": "array",

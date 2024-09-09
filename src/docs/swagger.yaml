@@ -130,7 +130,7 @@ definitions:
         example: c8edc98acee4d6243add4e59f8fd46d6a7f150831d74f0feb3a10144cbe0c032
         type: string
     type: object
-  model.DocumentData:
+  internal_model.DocumentData:
     properties:
       documentType:
         type: string
@@ -140,7 +140,7 @@ definitions:
   model.FullDocument:
     properties:
       data:
-        $ref: '#/definitions/model.DocumentData'
+        $ref: '#/definitions/internal_model.DocumentData'
       fields:
         items:
           $ref: '#/definitions/model.KeyValueField'
