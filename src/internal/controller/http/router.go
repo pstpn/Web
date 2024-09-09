@@ -4,12 +4,15 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/99designs/gqlgen/graphql/handler"
+	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
 	"course/docs"
+	"course/internal/controller/graphql/graph"
 	"course/internal/controller/http/admin"
 	"course/internal/controller/http/user"
 	"course/internal/service"
@@ -21,10 +24,32 @@ type Controller struct {
 	routerGroup *gin.RouterGroup
 }
 
+// Defining the Graphql handler
+func graphqlHandler() gin.HandlerFunc {
+	h := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
+
+	return func(c *gin.Context) {
+		h.ServeHTTP(c.Writer, c.Request)
+	}
+}
+
+// Defining the Playground handler
+func playgroundHandler() gin.HandlerFunc {
+	h := playground.Handler("GraphQL", "/graphql/api/v1/query")
+
+	return func(c *gin.Context) {
+		h.ServeHTTP(c.Writer, c.Request)
+	}
+}
+
 func NewRouter(handler *gin.Engine) *Controller {
 	handler.Use(gin.Logger())
 	handler.Use(gin.Recovery())
 	handler.Use(cors.Default())
+
+	// GraphQL API
+	handler.POST("graphql/api/v1/query", graphqlHandler())
+	handler.GET("graphql/api/v1/", playgroundHandler())
 
 	// Swagger v1 settings
 	docs.SwaggerInfo.BasePath = "/api/v1"

@@ -1,0 +1,22 @@
+scalar Time
+
+type Passage {
+  id: ID!
+  checkpointID: ID!
+  documentID: ID!
+  passageType: PassageType!
+  time: Time!
+}
+
+enum PassageType {
+  Entrance
+  Exit
+  UnknownPassageType
+}
+
+type Query {
+  """
+  Проверка на жизнеспособность
+  """
+  healthcheck: String
+}

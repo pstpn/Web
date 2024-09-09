@@ -1,14 +1,17 @@
-go-tests_template:
+go-tests-template:
 	gotests -all -w <path>
 
-mockery_template:
+mockery-template:
 	mockery --all --inpackage
 
-go-test_command:
+go-test-command:
 	go test -v ./...
 
 gen-swag:
 	swag init -g ./cmd/main.go -o ./docs
+
+gen-graphql:
+	cd internal/controller/graphql && go run github.com/99designs/gqlgen generate
 
 convert-swag-to-3.0:
 	./docs/to3.sh
@@ -21,4 +24,4 @@ swagger: fmt-swag gen-swag convert-swag-to-3.0
 run: swagger
 	go run cmd/main.go
 
-.PHONY: go-tests_template mockery_template go-test_command swag-gen convert-swag-to-3.0 swagger fmt-swag run
+.PHONY: go-tests-template mockery-template go-test-command gen-swag gen-graphql convert-swag-to-3.0 fmt-swag swagger run
