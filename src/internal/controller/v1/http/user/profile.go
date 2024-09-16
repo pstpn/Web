@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
 
-	httputils "course/internal/controller/http/utils"
+	httputils "course/internal/controller/v1/http/utils"
 	"course/internal/model"
 	"course/internal/service"
 	"course/internal/service/dto"

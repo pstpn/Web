@@ -88,31 +88,6 @@
         ]
       }
     },
-    "/healthcheck": {
-      "get": {
-        "tags": [
-          "system"
-        ],
-        "summary": "Проверка здоровья",
-        "description": "Проверка на жизнеспособность",
-        "responses": {
-          "200": {
-            "description": "Сервис жив",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Сервис мертв",
-            "content": {}
-          }
-        }
-      }
-    },
     "/infocard-photos/{id}": {
       "get": {
         "tags": [
@@ -441,7 +416,7 @@
           "content": {
             "*/*": {
               "schema": {
-                "$ref": "#/components/schemas/http.loginRequest"
+                "$ref": "#/components/schemas/auth.loginRequest"
               }
             }
           },
@@ -453,7 +428,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/http.loginResponse"
+                  "$ref": "#/components/schemas/auth.loginResponse"
                 }
               }
             }
@@ -745,7 +720,7 @@
           "content": {
             "*/*": {
               "schema": {
-                "$ref": "#/components/schemas/http.refreshTokensRequest"
+                "$ref": "#/components/schemas/auth.refreshTokensRequest"
               }
             }
           },
@@ -757,7 +732,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/http.refreshTokensResponse"
+                  "$ref": "#/components/schemas/auth.refreshTokensResponse"
                 }
               }
             }
@@ -798,7 +773,7 @@
           "content": {
             "*/*": {
               "schema": {
-                "$ref": "#/components/schemas/http.registerRequest"
+                "$ref": "#/components/schemas/auth.registerRequest"
               }
             }
           },
@@ -810,7 +785,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/http.registerResponse"
+                  "$ref": "#/components/schemas/auth.registerResponse"
                 }
               }
             }
@@ -881,6 +856,119 @@
           }
         }
       },
+      "auth.loginRequest": {
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string",
+            "example": "123"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "example": "+71234567890"
+          }
+        }
+      },
+      "auth.loginResponse": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2IiwiaWF0IjoxNzI1NzE4NTc2fQ.RdcJHE8TULJKW-mVyn-0OBL_O_kmISrFNuK6E8FeRSs"
+          },
+          "isAdmin": {
+            "type": "boolean",
+            "format": "bool",
+            "example": false
+          },
+          "refreshToken": {
+            "type": "string",
+            "example": "c8edc98acee4d6243add4e59f8fd46d6a7f150831d74f0feb3a10144cbe0c032"
+          }
+        }
+      },
+      "auth.refreshTokensRequest": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2IiwiaWF0IjoxNzI1NzE4NTc2fQ.RdcJHE8TULJKW-mVyn-0OBL_O_kmISrFNuK6E8FeRSs"
+          },
+          "refreshToken": {
+            "type": "string",
+            "example": "c8edc98acee4d6243add4e59f8fd46d6a7f150831d74f0feb3a10144cbe0c032"
+          }
+        }
+      },
+      "auth.refreshTokensResponse": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2IiwiaWF0IjoxNzI1NzE4NTc2fQ.RdcJHE8TULJKW-mVyn-0OBL_O_kmISrFNuK6E8FeRSs"
+          },
+          "isAdmin": {
+            "type": "boolean",
+            "format": "bool",
+            "example": false
+          },
+          "refreshToken": {
+            "type": "string",
+            "example": "c8edc98acee4d6243add4e59f8fd46d6a7f150831d74f0feb3a10144cbe0c032"
+          }
+        }
+      },
+      "auth.registerRequest": {
+        "type": "object",
+        "properties": {
+          "companyID": {
+            "type": "integer",
+            "example": 1
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "example": "31.03.2004"
+          },
+          "name": {
+            "type": "string",
+            "example": "Степа"
+          },
+          "password": {
+            "type": "string",
+            "example": "123"
+          },
+          "phoneNumber": {
+            "type": "string",
+            "example": "+71234567890"
+          },
+          "post": {
+            "type": "string",
+            "example": "Сотрудник"
+          },
+          "surname": {
+            "type": "string",
+            "example": "Степик"
+          }
+        }
+      },
+      "auth.registerResponse": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string",
+            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2IiwiaWF0IjoxNzI1NzE4NTc2fQ.RdcJHE8TULJKW-mVyn-0OBL_O_kmISrFNuK6E8FeRSs"
+          },
+          "isAdmin": {
+            "type": "boolean",
+            "format": "bool",
+            "example": false
+          },
+          "refreshToken": {
+            "type": "string",
+            "example": "c8edc98acee4d6243add4e59f8fd46d6a7f150831d74f0feb3a10144cbe0c032"
+          }
+        }
+      },
       "http.StatusBadRequest": {
         "type": "object",
         "properties": {
@@ -917,120 +1005,7 @@
           }
         }
       },
-      "http.loginRequest": {
-        "type": "object",
-        "properties": {
-          "password": {
-            "type": "string",
-            "example": "123"
-          },
-          "phoneNumber": {
-            "type": "string",
-            "example": "+71234567890"
-          }
-        }
-      },
-      "http.loginResponse": {
-        "type": "object",
-        "properties": {
-          "accessToken": {
-            "type": "string",
-            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2IiwiaWF0IjoxNzI1NzE4NTc2fQ.RdcJHE8TULJKW-mVyn-0OBL_O_kmISrFNuK6E8FeRSs"
-          },
-          "isAdmin": {
-            "type": "boolean",
-            "format": "bool",
-            "example": false
-          },
-          "refreshToken": {
-            "type": "string",
-            "example": "c8edc98acee4d6243add4e59f8fd46d6a7f150831d74f0feb3a10144cbe0c032"
-          }
-        }
-      },
-      "http.refreshTokensRequest": {
-        "type": "object",
-        "properties": {
-          "accessToken": {
-            "type": "string",
-            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2IiwiaWF0IjoxNzI1NzE4NTc2fQ.RdcJHE8TULJKW-mVyn-0OBL_O_kmISrFNuK6E8FeRSs"
-          },
-          "refreshToken": {
-            "type": "string",
-            "example": "c8edc98acee4d6243add4e59f8fd46d6a7f150831d74f0feb3a10144cbe0c032"
-          }
-        }
-      },
-      "http.refreshTokensResponse": {
-        "type": "object",
-        "properties": {
-          "accessToken": {
-            "type": "string",
-            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2IiwiaWF0IjoxNzI1NzE4NTc2fQ.RdcJHE8TULJKW-mVyn-0OBL_O_kmISrFNuK6E8FeRSs"
-          },
-          "isAdmin": {
-            "type": "boolean",
-            "format": "bool",
-            "example": false
-          },
-          "refreshToken": {
-            "type": "string",
-            "example": "c8edc98acee4d6243add4e59f8fd46d6a7f150831d74f0feb3a10144cbe0c032"
-          }
-        }
-      },
-      "http.registerRequest": {
-        "type": "object",
-        "properties": {
-          "companyID": {
-            "type": "integer",
-            "example": 1
-          },
-          "dateOfBirth": {
-            "type": "string",
-            "example": "31.03.2004"
-          },
-          "name": {
-            "type": "string",
-            "example": "Степа"
-          },
-          "password": {
-            "type": "string",
-            "example": "123"
-          },
-          "phoneNumber": {
-            "type": "string",
-            "example": "+71234567890"
-          },
-          "post": {
-            "type": "string",
-            "example": "Сотрудник"
-          },
-          "surname": {
-            "type": "string",
-            "example": "Степик"
-          }
-        }
-      },
-      "http.registerResponse": {
-        "type": "object",
-        "properties": {
-          "accessToken": {
-            "type": "string",
-            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2IiwiaWF0IjoxNzI1NzE4NTc2fQ.RdcJHE8TULJKW-mVyn-0OBL_O_kmISrFNuK6E8FeRSs"
-          },
-          "isAdmin": {
-            "type": "boolean",
-            "format": "bool",
-            "example": false
-          },
-          "refreshToken": {
-            "type": "string",
-            "example": "c8edc98acee4d6243add4e59f8fd46d6a7f150831d74f0feb3a10144cbe0c032"
-          }
-        }
-      },
-      "internal_model.DocumentData": {
+      "model.DataDocument": {
         "type": "object",
         "properties": {
           "documentType": {
@@ -1045,7 +1020,7 @@
         "type": "object",
         "properties": {
           "data": {
-            "$ref": "#/components/schemas/internal_model.DocumentData"
+            "$ref": "#/components/schemas/model.DataDocument"
           },
           "fields": {
             "type": "array",

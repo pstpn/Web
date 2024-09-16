@@ -1,4 +1,4 @@
-package http
+package auth
 
 import (
 	"errors"
@@ -15,13 +15,13 @@ import (
 	"course/pkg/logger"
 )
 
-type AuthController struct {
+type Controller struct {
 	l           logger.Interface
 	authService service.AuthService
 }
 
-func NewAuthController(l logger.Interface, authService service.AuthService) *AuthController {
-	return &AuthController{
+func NewAuthController(l logger.Interface, authService service.AuthService) *Controller {
+	return &Controller{
 		l:           l,
 		authService: authService,
 	}
@@ -53,7 +53,7 @@ type registerResponse struct {
 //	@Failure		400				{object}	http.StatusBadRequest			"Некорректное тело запроса"
 //	@Failure		500				{object}	http.StatusInternalServerError	"Внутренняя ошибка регистрации пользователя"
 //	@Router			/register [post]
-func (a *AuthController) Register(c *gin.Context) {
+func (a *Controller) Register(c *gin.Context) {
 	var req registerRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -114,7 +114,7 @@ type loginResponse struct {
 //	@Failure		400				{object}	http.StatusBadRequest	"Некорректное тело запроса"
 //	@Failure		401				{object}	http.StatusUnauthorized	"Вход неуспешен"
 //	@Router			/login [post]
-func (a *AuthController) Login(c *gin.Context) {
+func (a *Controller) Login(c *gin.Context) {
 	var req loginRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -161,7 +161,7 @@ type refreshTokensResponse struct {
 //	@Failure		400						{object}	http.StatusBadRequest	"Некорректное тело запроса"
 //	@Failure		401						{object}	http.StatusUnauthorized	"Вход неуспешен"
 //	@Router			/refresh [post]
-func (a *AuthController) RefreshTokens(c *gin.Context) {
+func (a *Controller) RefreshTokens(c *gin.Context) {
 	var req refreshTokensRequest
 
 	if err := c.ShouldBindJSON(&req); err != nil {

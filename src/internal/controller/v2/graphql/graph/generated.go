@@ -5,7 +5,7 @@ package graph
 import (
 	"bytes"
 	"context"
-	"course/internal/controller/graphql/graph/model"
+	"course/internal/controller/v2/graphql/graph/model"
 	"embed"
 	"errors"
 	"fmt"
@@ -51,6 +51,7 @@ type ComplexityRoot struct {
 	Mutation struct {
 		ConfirmEmployeeInfoCard func(childComplexity int, req model.ConfirmEmployeeInfoCardRequest) int
 		CreatePassage           func(childComplexity int, req model.CreatePassageRequest) int
+		CreateSQUIDPassage      func(childComplexity int, req model.CreateSQUIDPassageRequest) int
 		FillProfile             func(childComplexity int, req model.FillProfileRequest) int
 		Login                   func(childComplexity int, req model.LoginRequest) int
 		RefreshTokens           func(childComplexity int, req model.RefreshTokensRequest) int
@@ -141,6 +142,7 @@ type MutationResolver interface {
 	FillProfile(ctx context.Context, req model.FillProfileRequest) (*string, error)
 	ConfirmEmployeeInfoCard(ctx context.Context, req model.ConfirmEmployeeInfoCardRequest) (*string, error)
 	CreatePassage(ctx context.Context, req model.CreatePassageRequest) (*string, error)
+	CreateSQUIDPassage(ctx context.Context, req model.CreateSQUIDPassageRequest) (*string, error)
 }
 type QueryResolver interface {
 	Healthcheck(ctx context.Context) (*string, error)
@@ -193,6 +195,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.CreatePassage(childComplexity, args["req"].(model.CreatePassageRequest)), true
+
+	case "Mutation.createSQUIDPassage":
+		if e.complexity.Mutation.CreateSQUIDPassage == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_createSQUIDPassage_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CreateSQUIDPassage(childComplexity, args["req"].(model.CreateSQUIDPassageRequest)), true
 
 	case "Mutation.fillProfile":
 		if e.complexity.Mutation.FillProfile == nil {
@@ -557,6 +571,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputconfirmEmployeeInfoCardRequest,
 		ec.unmarshalInputcreatePassageRequest,
+		ec.unmarshalInputcreateSQUIDPassageRequest,
 		ec.unmarshalInputfillProfileRequest,
 		ec.unmarshalInputgetEmployeeInfoCardPhotoRequest,
 		ec.unmarshalInputgetEmployeePhotoRequest,
@@ -688,7 +703,7 @@ func (ec *executionContext) field_Mutation_confirmEmployeeInfoCard_args(ctx cont
 	var arg0 model.ConfirmEmployeeInfoCardRequest
 	if tmp, ok := rawArgs["req"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("req"))
-		arg0, err = ec.unmarshalNconfirmEmployeeInfoCardRequest2courseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐConfirmEmployeeInfoCardRequest(ctx, tmp)
+		arg0, err = ec.unmarshalNconfirmEmployeeInfoCardRequest2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐConfirmEmployeeInfoCardRequest(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -703,7 +718,22 @@ func (ec *executionContext) field_Mutation_createPassage_args(ctx context.Contex
 	var arg0 model.CreatePassageRequest
 	if tmp, ok := rawArgs["req"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("req"))
-		arg0, err = ec.unmarshalNcreatePassageRequest2courseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐCreatePassageRequest(ctx, tmp)
+		arg0, err = ec.unmarshalNcreatePassageRequest2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐCreatePassageRequest(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["req"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_createSQUIDPassage_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.CreateSQUIDPassageRequest
+	if tmp, ok := rawArgs["req"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("req"))
+		arg0, err = ec.unmarshalNcreateSQUIDPassageRequest2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐCreateSQUIDPassageRequest(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -718,7 +748,7 @@ func (ec *executionContext) field_Mutation_fillProfile_args(ctx context.Context,
 	var arg0 model.FillProfileRequest
 	if tmp, ok := rawArgs["req"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("req"))
-		arg0, err = ec.unmarshalNfillProfileRequest2courseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐFillProfileRequest(ctx, tmp)
+		arg0, err = ec.unmarshalNfillProfileRequest2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐFillProfileRequest(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -733,7 +763,7 @@ func (ec *executionContext) field_Mutation_login_args(ctx context.Context, rawAr
 	var arg0 model.LoginRequest
 	if tmp, ok := rawArgs["req"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("req"))
-		arg0, err = ec.unmarshalNloginRequest2courseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐLoginRequest(ctx, tmp)
+		arg0, err = ec.unmarshalNloginRequest2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐLoginRequest(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -748,7 +778,7 @@ func (ec *executionContext) field_Mutation_refreshTokens_args(ctx context.Contex
 	var arg0 model.RefreshTokensRequest
 	if tmp, ok := rawArgs["req"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("req"))
-		arg0, err = ec.unmarshalNrefreshTokensRequest2courseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐRefreshTokensRequest(ctx, tmp)
+		arg0, err = ec.unmarshalNrefreshTokensRequest2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐRefreshTokensRequest(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -763,7 +793,7 @@ func (ec *executionContext) field_Mutation_register_args(ctx context.Context, ra
 	var arg0 model.RegisterRequest
 	if tmp, ok := rawArgs["req"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("req"))
-		arg0, err = ec.unmarshalNregisterRequest2courseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐRegisterRequest(ctx, tmp)
+		arg0, err = ec.unmarshalNregisterRequest2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐRegisterRequest(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -793,7 +823,7 @@ func (ec *executionContext) field_Query_getEmployeeInfoCardPhoto_args(ctx contex
 	var arg0 model.GetEmployeeInfoCardPhotoRequest
 	if tmp, ok := rawArgs["req"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("req"))
-		arg0, err = ec.unmarshalNgetEmployeeInfoCardPhotoRequest2courseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐGetEmployeeInfoCardPhotoRequest(ctx, tmp)
+		arg0, err = ec.unmarshalNgetEmployeeInfoCardPhotoRequest2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐGetEmployeeInfoCardPhotoRequest(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -808,7 +838,7 @@ func (ec *executionContext) field_Query_getEmployeePhoto_args(ctx context.Contex
 	var arg0 model.GetEmployeePhotoRequest
 	if tmp, ok := rawArgs["req"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("req"))
-		arg0, err = ec.unmarshalNgetEmployeePhotoRequest2courseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐGetEmployeePhotoRequest(ctx, tmp)
+		arg0, err = ec.unmarshalNgetEmployeePhotoRequest2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐGetEmployeePhotoRequest(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -823,7 +853,7 @@ func (ec *executionContext) field_Query_getFullInfoCard_args(ctx context.Context
 	var arg0 model.GetFullInfoCardRequest
 	if tmp, ok := rawArgs["req"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("req"))
-		arg0, err = ec.unmarshalNgetFullInfoCardRequest2courseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐGetFullInfoCardRequest(ctx, tmp)
+		arg0, err = ec.unmarshalNgetFullInfoCardRequest2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐGetFullInfoCardRequest(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -838,7 +868,7 @@ func (ec *executionContext) field_Query_getProfile_args(ctx context.Context, raw
 	var arg0 model.GetProfileRequest
 	if tmp, ok := rawArgs["req"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("req"))
-		arg0, err = ec.unmarshalNgetProfileRequest2courseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐGetProfileRequest(ctx, tmp)
+		arg0, err = ec.unmarshalNgetProfileRequest2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐGetProfileRequest(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -853,7 +883,7 @@ func (ec *executionContext) field_Query_listFullInfoCards_args(ctx context.Conte
 	var arg0 model.ListFullInfoCardsRequest
 	if tmp, ok := rawArgs["req"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("req"))
-		arg0, err = ec.unmarshalNlistFullInfoCardsRequest2courseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐListFullInfoCardsRequest(ctx, tmp)
+		arg0, err = ec.unmarshalNlistFullInfoCardsRequest2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐListFullInfoCardsRequest(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -928,7 +958,7 @@ func (ec *executionContext) _Mutation_register(ctx context.Context, field graphq
 	}
 	res := resTmp.(*model.RegisterResponse)
 	fc.Result = res
-	return ec.marshalNregisterResponse2ᚖcourseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐRegisterResponse(ctx, field.Selections, res)
+	return ec.marshalNregisterResponse2ᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐRegisterResponse(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_register(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -991,7 +1021,7 @@ func (ec *executionContext) _Mutation_login(ctx context.Context, field graphql.C
 	}
 	res := resTmp.(*model.LoginResponse)
 	fc.Result = res
-	return ec.marshalNloginResponse2ᚖcourseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐLoginResponse(ctx, field.Selections, res)
+	return ec.marshalNloginResponse2ᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐLoginResponse(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_login(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1054,7 +1084,7 @@ func (ec *executionContext) _Mutation_refreshTokens(ctx context.Context, field g
 	}
 	res := resTmp.(*model.RefreshTokensResponse)
 	fc.Result = res
-	return ec.marshalNrefreshTokensResponse2ᚖcourseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐRefreshTokensResponse(ctx, field.Selections, res)
+	return ec.marshalNrefreshTokensResponse2ᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐRefreshTokensResponse(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_refreshTokens(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1245,6 +1275,58 @@ func (ec *executionContext) fieldContext_Mutation_createPassage(ctx context.Cont
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_createSQUIDPassage(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_createSQUIDPassage(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().CreateSQUIDPassage(rctx, fc.Args["req"].(model.CreateSQUIDPassageRequest))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalONull2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_createSQUIDPassage(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Null does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_createSQUIDPassage_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_healthcheck(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_healthcheck(ctx, field)
 	if err != nil {
@@ -1314,7 +1396,7 @@ func (ec *executionContext) _Query_getProfile(ctx context.Context, field graphql
 	}
 	res := resTmp.(*model.GetProfileResponse)
 	fc.Result = res
-	return ec.marshalNgetProfileResponse2ᚖcourseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐGetProfileResponse(ctx, field.Selections, res)
+	return ec.marshalNgetProfileResponse2ᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐGetProfileResponse(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_getProfile(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1433,7 +1515,7 @@ func (ec *executionContext) _Query_listFullInfoCards(ctx context.Context, field 
 	}
 	res := resTmp.(*model.ListFullInfoCardsResponse)
 	fc.Result = res
-	return ec.marshalNlistFullInfoCardsResponse2ᚖcourseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐListFullInfoCardsResponse(ctx, field.Selections, res)
+	return ec.marshalNlistFullInfoCardsResponse2ᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐListFullInfoCardsResponse(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_listFullInfoCards(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1492,7 +1574,7 @@ func (ec *executionContext) _Query_getFullInfoCard(ctx context.Context, field gr
 	}
 	res := resTmp.(*model.GetProfileResponse)
 	fc.Result = res
-	return ec.marshalNgetProfileResponse2ᚖcourseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐGetProfileResponse(ctx, field.Selections, res)
+	return ec.marshalNgetProfileResponse2ᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐGetProfileResponse(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_getFullInfoCard(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3597,7 +3679,7 @@ func (ec *executionContext) _documentFull_data(ctx context.Context, field graphq
 	}
 	res := resTmp.(*model.DocumentData)
 	fc.Result = res
-	return ec.marshalNdocumentData2ᚖcourseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐDocumentData(ctx, field.Selections, res)
+	return ec.marshalNdocumentData2ᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐDocumentData(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_documentFull_data(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3644,7 +3726,7 @@ func (ec *executionContext) _documentFull_fields(ctx context.Context, field grap
 	}
 	res := resTmp.([]*model.KeyValueFields)
 	fc.Result = res
-	return ec.marshalOkeyValueFields2ᚕᚖcourseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐKeyValueFieldsᚄ(ctx, field.Selections, res)
+	return ec.marshalOkeyValueFields2ᚕᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐKeyValueFieldsᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_documentFull_fields(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3691,7 +3773,7 @@ func (ec *executionContext) _getFullInfoCardResponse_document(ctx context.Contex
 	}
 	res := resTmp.(*model.DocumentFull)
 	fc.Result = res
-	return ec.marshalOdocumentFull2ᚖcourseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐDocumentFull(ctx, field.Selections, res)
+	return ec.marshalOdocumentFull2ᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐDocumentFull(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_getFullInfoCardResponse_document(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3738,7 +3820,7 @@ func (ec *executionContext) _getFullInfoCardResponse_passages(ctx context.Contex
 	}
 	res := resTmp.([]*model.PassageShort)
 	fc.Result = res
-	return ec.marshalOpassageShort2ᚕᚖcourseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐPassageShortᚄ(ctx, field.Selections, res)
+	return ec.marshalOpassageShort2ᚕᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐPassageShortᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_getFullInfoCardResponse_passages(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -3961,7 +4043,7 @@ func (ec *executionContext) _getProfileResponse_documentFields(ctx context.Conte
 	}
 	res := resTmp.([]*model.KeyValueFields)
 	fc.Result = res
-	return ec.marshalOkeyValueFields2ᚕᚖcourseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐKeyValueFieldsᚄ(ctx, field.Selections, res)
+	return ec.marshalOkeyValueFields2ᚕᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐKeyValueFieldsᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_getProfileResponse_documentFields(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -4492,7 +4574,7 @@ func (ec *executionContext) _listFullInfoCardsResponse_infoCards(ctx context.Con
 	}
 	res := resTmp.([]*model.InfoCardFull)
 	fc.Result = res
-	return ec.marshalOinfoCardFull2ᚕᚖcourseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐInfoCardFullᚄ(ctx, field.Selections, res)
+	return ec.marshalOinfoCardFull2ᚕᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐInfoCardFullᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_listFullInfoCardsResponse_infoCards(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -5084,6 +5166,40 @@ func (ec *executionContext) unmarshalInputcreatePassageRequest(ctx context.Conte
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputcreateSQUIDPassageRequest(ctx context.Context, obj interface{}) (model.CreateSQUIDPassageRequest, error) {
+	var it model.CreateSQUIDPassageRequest
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"infoCardID", "time"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "infoCardID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("infoCardID"))
+			data, err := ec.unmarshalNID2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.InfoCardID = data
+		case "time":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("time"))
+			data, err := ec.unmarshalNTime2timeᚐTime(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Time = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputfillProfileRequest(ctx context.Context, obj interface{}) (model.FillProfileRequest, error) {
 	var it model.FillProfileRequest
 	asMap := map[string]interface{}{}
@@ -5470,6 +5586,10 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "createPassage":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createPassage(ctx, field)
+			})
+		case "createSQUIDPassage":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_createSQUIDPassage(ctx, field)
 			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
@@ -6850,17 +6970,22 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 	return res
 }
 
-func (ec *executionContext) unmarshalNconfirmEmployeeInfoCardRequest2courseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐConfirmEmployeeInfoCardRequest(ctx context.Context, v interface{}) (model.ConfirmEmployeeInfoCardRequest, error) {
+func (ec *executionContext) unmarshalNconfirmEmployeeInfoCardRequest2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐConfirmEmployeeInfoCardRequest(ctx context.Context, v interface{}) (model.ConfirmEmployeeInfoCardRequest, error) {
 	res, err := ec.unmarshalInputconfirmEmployeeInfoCardRequest(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNcreatePassageRequest2courseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐCreatePassageRequest(ctx context.Context, v interface{}) (model.CreatePassageRequest, error) {
+func (ec *executionContext) unmarshalNcreatePassageRequest2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐCreatePassageRequest(ctx context.Context, v interface{}) (model.CreatePassageRequest, error) {
 	res, err := ec.unmarshalInputcreatePassageRequest(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNdocumentData2ᚖcourseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐDocumentData(ctx context.Context, sel ast.SelectionSet, v *model.DocumentData) graphql.Marshaler {
+func (ec *executionContext) unmarshalNcreateSQUIDPassageRequest2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐCreateSQUIDPassageRequest(ctx context.Context, v interface{}) (model.CreateSQUIDPassageRequest, error) {
+	res, err := ec.unmarshalInputcreateSQUIDPassageRequest(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNdocumentData2ᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐDocumentData(ctx context.Context, sel ast.SelectionSet, v *model.DocumentData) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -6870,36 +6995,36 @@ func (ec *executionContext) marshalNdocumentData2ᚖcourseᚋinternalᚋcontroll
 	return ec._documentData(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNfillProfileRequest2courseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐFillProfileRequest(ctx context.Context, v interface{}) (model.FillProfileRequest, error) {
+func (ec *executionContext) unmarshalNfillProfileRequest2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐFillProfileRequest(ctx context.Context, v interface{}) (model.FillProfileRequest, error) {
 	res, err := ec.unmarshalInputfillProfileRequest(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNgetEmployeeInfoCardPhotoRequest2courseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐGetEmployeeInfoCardPhotoRequest(ctx context.Context, v interface{}) (model.GetEmployeeInfoCardPhotoRequest, error) {
+func (ec *executionContext) unmarshalNgetEmployeeInfoCardPhotoRequest2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐGetEmployeeInfoCardPhotoRequest(ctx context.Context, v interface{}) (model.GetEmployeeInfoCardPhotoRequest, error) {
 	res, err := ec.unmarshalInputgetEmployeeInfoCardPhotoRequest(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNgetEmployeePhotoRequest2courseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐGetEmployeePhotoRequest(ctx context.Context, v interface{}) (model.GetEmployeePhotoRequest, error) {
+func (ec *executionContext) unmarshalNgetEmployeePhotoRequest2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐGetEmployeePhotoRequest(ctx context.Context, v interface{}) (model.GetEmployeePhotoRequest, error) {
 	res, err := ec.unmarshalInputgetEmployeePhotoRequest(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNgetFullInfoCardRequest2courseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐGetFullInfoCardRequest(ctx context.Context, v interface{}) (model.GetFullInfoCardRequest, error) {
+func (ec *executionContext) unmarshalNgetFullInfoCardRequest2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐGetFullInfoCardRequest(ctx context.Context, v interface{}) (model.GetFullInfoCardRequest, error) {
 	res, err := ec.unmarshalInputgetFullInfoCardRequest(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNgetProfileRequest2courseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐGetProfileRequest(ctx context.Context, v interface{}) (model.GetProfileRequest, error) {
+func (ec *executionContext) unmarshalNgetProfileRequest2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐGetProfileRequest(ctx context.Context, v interface{}) (model.GetProfileRequest, error) {
 	res, err := ec.unmarshalInputgetProfileRequest(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNgetProfileResponse2courseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐGetProfileResponse(ctx context.Context, sel ast.SelectionSet, v model.GetProfileResponse) graphql.Marshaler {
+func (ec *executionContext) marshalNgetProfileResponse2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐGetProfileResponse(ctx context.Context, sel ast.SelectionSet, v model.GetProfileResponse) graphql.Marshaler {
 	return ec._getProfileResponse(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNgetProfileResponse2ᚖcourseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐGetProfileResponse(ctx context.Context, sel ast.SelectionSet, v *model.GetProfileResponse) graphql.Marshaler {
+func (ec *executionContext) marshalNgetProfileResponse2ᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐGetProfileResponse(ctx context.Context, sel ast.SelectionSet, v *model.GetProfileResponse) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -6909,7 +7034,7 @@ func (ec *executionContext) marshalNgetProfileResponse2ᚖcourseᚋinternalᚋco
 	return ec._getProfileResponse(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNinfoCardFull2ᚖcourseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐInfoCardFull(ctx context.Context, sel ast.SelectionSet, v *model.InfoCardFull) graphql.Marshaler {
+func (ec *executionContext) marshalNinfoCardFull2ᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐInfoCardFull(ctx context.Context, sel ast.SelectionSet, v *model.InfoCardFull) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -6919,7 +7044,7 @@ func (ec *executionContext) marshalNinfoCardFull2ᚖcourseᚋinternalᚋcontroll
 	return ec._infoCardFull(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNkeyValueFields2ᚖcourseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐKeyValueFields(ctx context.Context, sel ast.SelectionSet, v *model.KeyValueFields) graphql.Marshaler {
+func (ec *executionContext) marshalNkeyValueFields2ᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐKeyValueFields(ctx context.Context, sel ast.SelectionSet, v *model.KeyValueFields) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -6929,16 +7054,16 @@ func (ec *executionContext) marshalNkeyValueFields2ᚖcourseᚋinternalᚋcontro
 	return ec._keyValueFields(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNlistFullInfoCardsRequest2courseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐListFullInfoCardsRequest(ctx context.Context, v interface{}) (model.ListFullInfoCardsRequest, error) {
+func (ec *executionContext) unmarshalNlistFullInfoCardsRequest2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐListFullInfoCardsRequest(ctx context.Context, v interface{}) (model.ListFullInfoCardsRequest, error) {
 	res, err := ec.unmarshalInputlistFullInfoCardsRequest(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNlistFullInfoCardsResponse2courseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐListFullInfoCardsResponse(ctx context.Context, sel ast.SelectionSet, v model.ListFullInfoCardsResponse) graphql.Marshaler {
+func (ec *executionContext) marshalNlistFullInfoCardsResponse2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐListFullInfoCardsResponse(ctx context.Context, sel ast.SelectionSet, v model.ListFullInfoCardsResponse) graphql.Marshaler {
 	return ec._listFullInfoCardsResponse(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNlistFullInfoCardsResponse2ᚖcourseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐListFullInfoCardsResponse(ctx context.Context, sel ast.SelectionSet, v *model.ListFullInfoCardsResponse) graphql.Marshaler {
+func (ec *executionContext) marshalNlistFullInfoCardsResponse2ᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐListFullInfoCardsResponse(ctx context.Context, sel ast.SelectionSet, v *model.ListFullInfoCardsResponse) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -6948,16 +7073,16 @@ func (ec *executionContext) marshalNlistFullInfoCardsResponse2ᚖcourseᚋintern
 	return ec._listFullInfoCardsResponse(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNloginRequest2courseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐLoginRequest(ctx context.Context, v interface{}) (model.LoginRequest, error) {
+func (ec *executionContext) unmarshalNloginRequest2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐLoginRequest(ctx context.Context, v interface{}) (model.LoginRequest, error) {
 	res, err := ec.unmarshalInputloginRequest(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNloginResponse2courseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐLoginResponse(ctx context.Context, sel ast.SelectionSet, v model.LoginResponse) graphql.Marshaler {
+func (ec *executionContext) marshalNloginResponse2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐLoginResponse(ctx context.Context, sel ast.SelectionSet, v model.LoginResponse) graphql.Marshaler {
 	return ec._loginResponse(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNloginResponse2ᚖcourseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐLoginResponse(ctx context.Context, sel ast.SelectionSet, v *model.LoginResponse) graphql.Marshaler {
+func (ec *executionContext) marshalNloginResponse2ᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐLoginResponse(ctx context.Context, sel ast.SelectionSet, v *model.LoginResponse) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -6967,7 +7092,7 @@ func (ec *executionContext) marshalNloginResponse2ᚖcourseᚋinternalᚋcontrol
 	return ec._loginResponse(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNpassageShort2ᚖcourseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐPassageShort(ctx context.Context, sel ast.SelectionSet, v *model.PassageShort) graphql.Marshaler {
+func (ec *executionContext) marshalNpassageShort2ᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐPassageShort(ctx context.Context, sel ast.SelectionSet, v *model.PassageShort) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -6977,16 +7102,16 @@ func (ec *executionContext) marshalNpassageShort2ᚖcourseᚋinternalᚋcontroll
 	return ec._passageShort(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNrefreshTokensRequest2courseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐRefreshTokensRequest(ctx context.Context, v interface{}) (model.RefreshTokensRequest, error) {
+func (ec *executionContext) unmarshalNrefreshTokensRequest2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐRefreshTokensRequest(ctx context.Context, v interface{}) (model.RefreshTokensRequest, error) {
 	res, err := ec.unmarshalInputrefreshTokensRequest(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNrefreshTokensResponse2courseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐRefreshTokensResponse(ctx context.Context, sel ast.SelectionSet, v model.RefreshTokensResponse) graphql.Marshaler {
+func (ec *executionContext) marshalNrefreshTokensResponse2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐRefreshTokensResponse(ctx context.Context, sel ast.SelectionSet, v model.RefreshTokensResponse) graphql.Marshaler {
 	return ec._refreshTokensResponse(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNrefreshTokensResponse2ᚖcourseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐRefreshTokensResponse(ctx context.Context, sel ast.SelectionSet, v *model.RefreshTokensResponse) graphql.Marshaler {
+func (ec *executionContext) marshalNrefreshTokensResponse2ᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐRefreshTokensResponse(ctx context.Context, sel ast.SelectionSet, v *model.RefreshTokensResponse) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -6996,16 +7121,16 @@ func (ec *executionContext) marshalNrefreshTokensResponse2ᚖcourseᚋinternal�
 	return ec._refreshTokensResponse(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNregisterRequest2courseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐRegisterRequest(ctx context.Context, v interface{}) (model.RegisterRequest, error) {
+func (ec *executionContext) unmarshalNregisterRequest2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐRegisterRequest(ctx context.Context, v interface{}) (model.RegisterRequest, error) {
 	res, err := ec.unmarshalInputregisterRequest(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNregisterResponse2courseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐRegisterResponse(ctx context.Context, sel ast.SelectionSet, v model.RegisterResponse) graphql.Marshaler {
+func (ec *executionContext) marshalNregisterResponse2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐRegisterResponse(ctx context.Context, sel ast.SelectionSet, v model.RegisterResponse) graphql.Marshaler {
 	return ec._registerResponse(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNregisterResponse2ᚖcourseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐRegisterResponse(ctx context.Context, sel ast.SelectionSet, v *model.RegisterResponse) graphql.Marshaler {
+func (ec *executionContext) marshalNregisterResponse2ᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐRegisterResponse(ctx context.Context, sel ast.SelectionSet, v *model.RegisterResponse) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -7291,14 +7416,14 @@ func (ec *executionContext) marshalOdirectus_files2ᚖstring(ctx context.Context
 	return res
 }
 
-func (ec *executionContext) marshalOdocumentFull2ᚖcourseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐDocumentFull(ctx context.Context, sel ast.SelectionSet, v *model.DocumentFull) graphql.Marshaler {
+func (ec *executionContext) marshalOdocumentFull2ᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐDocumentFull(ctx context.Context, sel ast.SelectionSet, v *model.DocumentFull) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	return ec._documentFull(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOinfoCardFull2ᚕᚖcourseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐInfoCardFullᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.InfoCardFull) graphql.Marshaler {
+func (ec *executionContext) marshalOinfoCardFull2ᚕᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐInfoCardFullᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.InfoCardFull) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -7325,7 +7450,7 @@ func (ec *executionContext) marshalOinfoCardFull2ᚕᚖcourseᚋinternalᚋcontr
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNinfoCardFull2ᚖcourseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐInfoCardFull(ctx, sel, v[i])
+			ret[i] = ec.marshalNinfoCardFull2ᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐInfoCardFull(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -7345,7 +7470,7 @@ func (ec *executionContext) marshalOinfoCardFull2ᚕᚖcourseᚋinternalᚋcontr
 	return ret
 }
 
-func (ec *executionContext) marshalOkeyValueFields2ᚕᚖcourseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐKeyValueFieldsᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.KeyValueFields) graphql.Marshaler {
+func (ec *executionContext) marshalOkeyValueFields2ᚕᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐKeyValueFieldsᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.KeyValueFields) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -7372,7 +7497,7 @@ func (ec *executionContext) marshalOkeyValueFields2ᚕᚖcourseᚋinternalᚋcon
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNkeyValueFields2ᚖcourseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐKeyValueFields(ctx, sel, v[i])
+			ret[i] = ec.marshalNkeyValueFields2ᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐKeyValueFields(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -7392,7 +7517,7 @@ func (ec *executionContext) marshalOkeyValueFields2ᚕᚖcourseᚋinternalᚋcon
 	return ret
 }
 
-func (ec *executionContext) marshalOpassageShort2ᚕᚖcourseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐPassageShortᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.PassageShort) graphql.Marshaler {
+func (ec *executionContext) marshalOpassageShort2ᚕᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐPassageShortᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.PassageShort) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -7419,7 +7544,7 @@ func (ec *executionContext) marshalOpassageShort2ᚕᚖcourseᚋinternalᚋcontr
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNpassageShort2ᚖcourseᚋinternalᚋcontrollerᚋgraphqlᚋgraphᚋmodelᚐPassageShort(ctx, sel, v[i])
+			ret[i] = ec.marshalNpassageShort2ᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐPassageShort(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)

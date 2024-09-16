@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"time"
 
-	"course/internal/controller/graphql/graph/model"
+	"course/internal/controller/v1/graphql/graph/model"
 )
 
 // Register is the resolver for the register field.
@@ -40,6 +40,11 @@ func (r *mutationResolver) ConfirmEmployeeInfoCard(ctx context.Context, req mode
 // CreatePassage is the resolver for the createPassage field.
 func (r *mutationResolver) CreatePassage(ctx context.Context, req model.CreatePassageRequest) (*string, error) {
 	panic(fmt.Errorf("not implemented: CreatePassage - createPassage"))
+}
+
+// CreateSQUIDPassage is the resolver for the createSQUIDPassage field.
+func (r *mutationResolver) CreateSQUIDPassage(ctx context.Context, req model.CreateSQUIDPassageRequest) (*string, error) {
+	panic(fmt.Errorf("not implemented: CreateSQUIDPassage - createSQUIDPassage"))
 }
 
 // Healthcheck is the resolver for the healthcheck field.

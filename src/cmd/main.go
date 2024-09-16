@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"course/config"
-	"course/internal/controller/http"
+	"course/internal/controller"
 	"course/internal/service"
 	storage2 "course/internal/storage"
 	mdb "course/internal/storage/mongodb"
@@ -20,13 +20,6 @@ import (
 	"course/pkg/storage/postgres"
 )
 
-// @title						Идентификация на КПП
-// @version					1.0
-// @description				# _В основе лежит мой курсовой проект 😎_
-// @BasePath					/api/v1
-// @securityDefinitions.apikey	BearerAuth
-// @in							header
-// @name						Authorization
 func main() {
 	// Read config
 	c, err := config.NewConfig()
@@ -96,13 +89,11 @@ func main() {
 
 	// Create controller
 	handler := gin.New()
-	controller := http.NewRouter(handler)
+	con := controller.NewRouter(handler)
 
 	// Set routes
-	controller.SetAuthRoute(l, authService)
-	controller.SetInfoCardRoute(l, infoCardService, documentService, fieldService, checkpointService, photoService, authService)
-	controller.SetProfileRoute(l, infoCardService, documentService, fieldService, authService, photoService)
-	controller.SetPassageRoute(l, documentService, checkpointService, authService)
+	con.SetV1Routes(l, infoCardService, documentService, fieldService, checkpointService, photoService, authService)
+	con.SetV2Routes(l, infoCardService, documentService, fieldService, checkpointService, photoService, authService)
 
 	// Create router
 	router := httpserver.New(handler, httpserver.Port(c.HTTP.Port))

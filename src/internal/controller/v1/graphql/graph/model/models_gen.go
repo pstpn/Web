@@ -22,6 +22,11 @@ type CreatePassageRequest struct {
 	Time         time.Time `json:"time"`
 }
 
+type CreateSQUIDPassageRequest struct {
+	InfoCardID string    `json:"infoCardID"`
+	Time       time.Time `json:"time"`
+}
+
 type DocumentData struct {
 	DocumentType string `json:"documentType"`
 	SerialNumber string `json:"serialNumber"`

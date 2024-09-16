@@ -8,11 +8,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
 
-	httputils "course/internal/controller/http/utils"
+	httputils "course/internal/controller/v2/http/utils"
 	"course/internal/model"
 	"course/internal/service"
 	"course/internal/service/dto"
 	"course/pkg/logger"
+	_ "course/pkg/server/http"
 	"course/pkg/storage/postgres"
 )
 
@@ -156,7 +157,7 @@ func (i *InfoCardController) GetFullInfoCard(c *gin.Context) {
 
 	c.JSON(http.StatusOK, getFullInfoCardResponse{
 		Document: &model.FullDocument{
-			Data: &model.DocumentData{
+			Data: &model.DataDocument{
 				DocumentType: document.Type.String(),
 				SerialNumber: document.SerialNumber,
 			},

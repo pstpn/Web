@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5"
 
-	httputils "course/internal/controller/http/utils"
+	httputils "course/internal/controller/v2/http/utils"
 	"course/internal/model"
 	"course/internal/service"
 	"course/internal/service/dto"
@@ -96,4 +96,26 @@ func (p *PassageController) CreatePassage(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, "OK")
+}
+
+type createSQUIDPassageRequest struct {
+	InfoCardID int64     `json:"infoCardID"`
+	Time       time.Time `json:"time"`
+}
+
+// CreateSQUIDPassage godoc
+//
+//	@Summary		Запись информации о проходе через КПП при помощи SQUID
+//	@Description	Метод для записи о проходе через КПП при помощи SQUID
+//	@Tags			admin
+//	@Param			createPassageRequest	body		createSQUIDPassageRequest		true	"Занесение информации о проходе через КПП при помощи SQUID"
+//	@Success		201						{string}	string							"Данные успешно занесены"
+//	@Failure		400						{object}	http.StatusBadRequest			"Некорректное тело запроса"
+//	@Failure		401						{object}	http.StatusUnauthorized			"Авторизация неуспешна"
+//	@Failure		404						{object}	http.StatusNotFound				"Карточка не найдена"
+//	@Failure		500						{object}	http.StatusInternalServerError	"Внутренняя ошибка занесения информации о проходе через КПП"
+//	@Security		BearerAuth
+//	@Router			/squid-passages [post]
+func (p *PassageController) CreateSQUIDPassage(c *gin.Context) {
+
 }
