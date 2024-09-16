@@ -59,13 +59,6 @@ type ComplexityRoot struct {
 		Register                func(childComplexity int, req model.RegisterRequest) int
 	}
 
-	Passage struct {
-		DocumentID func(childComplexity int) int
-		ID         func(childComplexity int) int
-		Time       func(childComplexity int) int
-		Type       func(childComplexity int) int
-	}
-
 	Query struct {
 		GetEmployeeInfoCardPhoto func(childComplexity int, req model.GetEmployeeInfoCardPhotoRequest) int
 		GetEmployeePhoto         func(childComplexity int, req model.GetEmployeePhotoRequest) int
@@ -126,6 +119,14 @@ type ComplexityRoot struct {
 		RefreshToken func(childComplexity int) int
 	}
 
+	Passage struct {
+		DocumentID func(childComplexity int) int
+		ID         func(childComplexity int) int
+		IsSquid    func(childComplexity int) int
+		Time       func(childComplexity int) int
+		Type       func(childComplexity int) int
+	}
+
 	PassageShort struct {
 		Time func(childComplexity int) int
 		Type func(childComplexity int) int
@@ -152,7 +153,7 @@ type MutationResolver interface {
 	ConfirmEmployeeInfoCard(ctx context.Context, req model.ConfirmEmployeeInfoCardRequest) (*string, error)
 	CreatePassage(ctx context.Context, req model.CreatePassageRequest) (*model.Passage, error)
 	DeletePassage(ctx context.Context, req model.DeletePassageRequest) (string, error)
-	CreateSQUIDPassage(ctx context.Context, req model.CreateSQUIDPassageRequest) (*string, error)
+	CreateSQUIDPassage(ctx context.Context, req model.CreateSQUIDPassageRequest) (*model.Passage, error)
 }
 type QueryResolver interface {
 	Healthcheck(ctx context.Context) (*string, error)
@@ -278,34 +279,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.Register(childComplexity, args["req"].(model.RegisterRequest)), true
-
-	case "Passage.documentID":
-		if e.complexity.Passage.DocumentID == nil {
-			break
-		}
-
-		return e.complexity.Passage.DocumentID(childComplexity), true
-
-	case "Passage.id":
-		if e.complexity.Passage.ID == nil {
-			break
-		}
-
-		return e.complexity.Passage.ID(childComplexity), true
-
-	case "Passage.time":
-		if e.complexity.Passage.Time == nil {
-			break
-		}
-
-		return e.complexity.Passage.Time(childComplexity), true
-
-	case "Passage.type":
-		if e.complexity.Passage.Type == nil {
-			break
-		}
-
-		return e.complexity.Passage.Type(childComplexity), true
 
 	case "Query.getEmployeeInfoCardPhoto":
 		if e.complexity.Query.GetEmployeeInfoCardPhoto == nil {
@@ -567,6 +540,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.LoginResponse.RefreshToken(childComplexity), true
+
+	case "passage.documentID":
+		if e.complexity.Passage.DocumentID == nil {
+			break
+		}
+
+		return e.complexity.Passage.DocumentID(childComplexity), true
+
+	case "passage.id":
+		if e.complexity.Passage.ID == nil {
+			break
+		}
+
+		return e.complexity.Passage.ID(childComplexity), true
+
+	case "passage.isSQUID":
+		if e.complexity.Passage.IsSquid == nil {
+			break
+		}
+
+		return e.complexity.Passage.IsSquid(childComplexity), true
+
+	case "passage.time":
+		if e.complexity.Passage.Time == nil {
+			break
+		}
+
+		return e.complexity.Passage.Time(childComplexity), true
+
+	case "passage.type":
+		if e.complexity.Passage.Type == nil {
+			break
+		}
+
+		return e.complexity.Passage.Type(childComplexity), true
 
 	case "passageShort.time":
 		if e.complexity.PassageShort.Time == nil {
@@ -1346,7 +1354,7 @@ func (ec *executionContext) _Mutation_createPassage(ctx context.Context, field g
 	}
 	res := resTmp.(*model.Passage)
 	fc.Result = res
-	return ec.marshalNPassage2ᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐPassage(ctx, field.Selections, res)
+	return ec.marshalNpassage2ᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐPassage(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createPassage(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1358,15 +1366,17 @@ func (ec *executionContext) fieldContext_Mutation_createPassage(ctx context.Cont
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_Passage_id(ctx, field)
+				return ec.fieldContext_passage_id(ctx, field)
 			case "documentID":
-				return ec.fieldContext_Passage_documentID(ctx, field)
+				return ec.fieldContext_passage_documentID(ctx, field)
 			case "type":
-				return ec.fieldContext_Passage_type(ctx, field)
+				return ec.fieldContext_passage_type(ctx, field)
 			case "time":
-				return ec.fieldContext_Passage_time(ctx, field)
+				return ec.fieldContext_passage_time(ctx, field)
+			case "isSQUID":
+				return ec.fieldContext_passage_isSQUID(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Passage", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type passage", field.Name)
 		},
 	}
 	defer func() {
@@ -1459,11 +1469,14 @@ func (ec *executionContext) _Mutation_createSQUIDPassage(ctx context.Context, fi
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.(*model.Passage)
 	fc.Result = res
-	return ec.marshalONil2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalNpassage2ᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐPassage(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createSQUIDPassage(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1473,7 +1486,19 @@ func (ec *executionContext) fieldContext_Mutation_createSQUIDPassage(ctx context
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Nil does not have child fields")
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_passage_id(ctx, field)
+			case "documentID":
+				return ec.fieldContext_passage_documentID(ctx, field)
+			case "type":
+				return ec.fieldContext_passage_type(ctx, field)
+			case "time":
+				return ec.fieldContext_passage_time(ctx, field)
+			case "isSQUID":
+				return ec.fieldContext_passage_isSQUID(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type passage", field.Name)
 		},
 	}
 	defer func() {
@@ -1486,182 +1511,6 @@ func (ec *executionContext) fieldContext_Mutation_createSQUIDPassage(ctx context
 	if fc.Args, err = ec.field_Mutation_createSQUIDPassage_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Passage_id(ctx context.Context, field graphql.CollectedField, obj *model.Passage) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Passage_id(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Passage_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Passage",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Passage_documentID(ctx context.Context, field graphql.CollectedField, obj *model.Passage) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Passage_documentID(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.DocumentID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Passage_documentID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Passage",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Passage_type(ctx context.Context, field graphql.CollectedField, obj *model.Passage) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Passage_type(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Type, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Passage_type(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Passage",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Passage_time(ctx context.Context, field graphql.CollectedField, obj *model.Passage) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Passage_time(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Time, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(time.Time)
-	fc.Result = res
-	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Passage_time(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Passage",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Time does not have child fields")
-		},
 	}
 	return fc, nil
 }
@@ -2029,7 +1878,7 @@ func (ec *executionContext) _Query_getPassages(ctx context.Context, field graphq
 	}
 	res := resTmp.([]*model.Passage)
 	fc.Result = res
-	return ec.marshalOPassage2ᚕᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐPassageᚄ(ctx, field.Selections, res)
+	return ec.marshalOpassage2ᚕᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐPassageᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_getPassages(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2041,15 +1890,17 @@ func (ec *executionContext) fieldContext_Query_getPassages(ctx context.Context, 
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_Passage_id(ctx, field)
+				return ec.fieldContext_passage_id(ctx, field)
 			case "documentID":
-				return ec.fieldContext_Passage_documentID(ctx, field)
+				return ec.fieldContext_passage_documentID(ctx, field)
 			case "type":
-				return ec.fieldContext_Passage_type(ctx, field)
+				return ec.fieldContext_passage_type(ctx, field)
 			case "time":
-				return ec.fieldContext_Passage_time(ctx, field)
+				return ec.fieldContext_passage_time(ctx, field)
+			case "isSQUID":
+				return ec.fieldContext_passage_isSQUID(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Passage", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type passage", field.Name)
 		},
 	}
 	defer func() {
@@ -5143,6 +4994,226 @@ func (ec *executionContext) fieldContext_loginResponse_isAdmin(_ context.Context
 	return fc, nil
 }
 
+func (ec *executionContext) _passage_id(ctx context.Context, field graphql.CollectedField, obj *model.Passage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_passage_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_passage_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "passage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _passage_documentID(ctx context.Context, field graphql.CollectedField, obj *model.Passage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_passage_documentID(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DocumentID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_passage_documentID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "passage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _passage_type(ctx context.Context, field graphql.CollectedField, obj *model.Passage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_passage_type(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Type, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_passage_type(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "passage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _passage_time(ctx context.Context, field graphql.CollectedField, obj *model.Passage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_passage_time(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Time, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_passage_time(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "passage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _passage_isSQUID(ctx context.Context, field graphql.CollectedField, obj *model.Passage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_passage_isSQUID(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsSquid, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_passage_isSQUID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "passage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _passageShort_type(ctx context.Context, field graphql.CollectedField, obj *model.PassageShort) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_passageShort_type(ctx, field)
 	if err != nil {
@@ -5574,7 +5645,7 @@ func (ec *executionContext) unmarshalInputcreateSQUIDPassageRequest(ctx context.
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"documentID", "time"}
+	fieldsInOrder := [...]string{"documentID", "type", "time"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -5588,6 +5659,13 @@ func (ec *executionContext) unmarshalInputcreateSQUIDPassageRequest(ctx context.
 				return it, err
 			}
 			it.DocumentID = data
+		case "type":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Type = data
 		case "time":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("time"))
 			data, err := ec.unmarshalNTime2timeᚐTime(ctx, v)
@@ -6056,57 +6134,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createSQUIDPassage(ctx, field)
 			})
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
-var passageImplementors = []string{"Passage"}
-
-func (ec *executionContext) _Passage(ctx context.Context, sel ast.SelectionSet, obj *model.Passage) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, passageImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Passage")
-		case "id":
-			out.Values[i] = ec._Passage_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "documentID":
-			out.Values[i] = ec._Passage_documentID(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "type":
-			out.Values[i] = ec._Passage_type(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "time":
-			out.Values[i] = ec._Passage_time(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -7034,6 +7061,65 @@ func (ec *executionContext) _loginResponse(ctx context.Context, sel ast.Selectio
 	return out
 }
 
+var passageImplementors = []string{"passage"}
+
+func (ec *executionContext) _passage(ctx context.Context, sel ast.SelectionSet, obj *model.Passage) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, passageImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("passage")
+		case "id":
+			out.Values[i] = ec._passage_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "documentID":
+			out.Values[i] = ec._passage_documentID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "type":
+			out.Values[i] = ec._passage_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "time":
+			out.Values[i] = ec._passage_time(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "isSQUID":
+			out.Values[i] = ec._passage_isSQUID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var passageShortImplementors = []string{"passageShort"}
 
 func (ec *executionContext) _passageShort(ctx context.Context, sel ast.SelectionSet, obj *model.PassageShort) graphql.Marshaler {
@@ -7238,20 +7324,6 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 		}
 	}
 	return res
-}
-
-func (ec *executionContext) marshalNPassage2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐPassage(ctx context.Context, sel ast.SelectionSet, v model.Passage) graphql.Marshaler {
-	return ec._Passage(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNPassage2ᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐPassage(ctx context.Context, sel ast.SelectionSet, v *model.Passage) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._Passage(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
@@ -7669,6 +7741,20 @@ func (ec *executionContext) marshalNloginResponse2ᚖcourseᚋinternalᚋcontrol
 	return ec._loginResponse(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalNpassage2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐPassage(ctx context.Context, sel ast.SelectionSet, v model.Passage) graphql.Marshaler {
+	return ec._passage(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNpassage2ᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐPassage(ctx context.Context, sel ast.SelectionSet, v *model.Passage) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._passage(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNpassageShort2ᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐPassageShort(ctx context.Context, sel ast.SelectionSet, v *model.PassageShort) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -7757,53 +7843,6 @@ func (ec *executionContext) marshalONil2ᚖstring(ctx context.Context, sel ast.S
 	}
 	res := graphql.MarshalString(*v)
 	return res
-}
-
-func (ec *executionContext) marshalOPassage2ᚕᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐPassageᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Passage) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNPassage2ᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐPassage(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
 }
 
 func (ec *executionContext) unmarshalOString2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
@@ -8122,6 +8161,53 @@ func (ec *executionContext) marshalOkeyValueFields2ᚕᚖcourseᚋinternalᚋcon
 				defer wg.Done()
 			}
 			ret[i] = ec.marshalNkeyValueFields2ᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐKeyValueFields(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalOpassage2ᚕᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐPassageᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Passage) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNpassage2ᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐPassage(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)

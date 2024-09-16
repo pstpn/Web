@@ -218,7 +218,7 @@ func (i *InfoCardController) ConfirmEmployeeInfoCard(c *gin.Context) {
 //	@Failure		404	{object}	http.StatusNotFound				"Карточка не найдена"
 //	@Failure		500	{object}	http.StatusInternalServerError	"Внутренняя ошибка получения фотографии пользователя"
 //	@Security		BearerAuth
-//	@Router			/infocard-photos/{id} [get]
+//	@Router			/infocards/{id}/photo [get]
 func (i *InfoCardController) GetEmployeeInfoCardPhoto(c *gin.Context) {
 	_, err := httputils.VerifyAccessToken(c, i.l, i.authService)
 	if err != nil {

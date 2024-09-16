@@ -88,6 +88,7 @@ func (p *PassageController) CreatePassage(c *gin.Context) {
 		DocumentID:   document.ID.Int(),
 		Type:         model.ToPassageTypeFromString(req.Type).Int(),
 		Time:         &req.Time,
+		IsSQUID:      false,
 	})
 	if err != nil {
 		p.l.Errorf("failed to create passage: %s", err.Error())
@@ -100,6 +101,7 @@ func (p *PassageController) CreatePassage(c *gin.Context) {
 
 type createSQUIDPassageRequest struct {
 	InfoCardID int64     `json:"infoCardID"`
+	Type       string    `json:"type"`
 	Time       time.Time `json:"time"`
 }
 
@@ -115,7 +117,47 @@ type createSQUIDPassageRequest struct {
 //	@Failure		404						{object}	http.StatusNotFound				"Карточка не найдена"
 //	@Failure		500						{object}	http.StatusInternalServerError	"Внутренняя ошибка занесения информации о проходе через КПП"
 //	@Security		BearerAuth
-//	@Router			/squid-passages [post]
+//	@Router			/passages/squid [post]
 func (p *PassageController) CreateSQUIDPassage(c *gin.Context) {
+	_, err := httputils.VerifyAccessToken(c, p.l, p.authService)
+	if err != nil {
+		return
+	}
 
+	var req createSQUIDPassageRequest
+
+	if err = c.ShouldBindJSON(&req); err != nil {
+		p.l.Errorf("incorrect request body: %s", err.Error())
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Incorrect request body"})
+		return
+	}
+
+	document, err := p.documentService.GetDocumentByInfoCard(c.Request.Context(), &dto.GetDocumentByInfoCardIDRequest{
+		InfoCardID: req.InfoCardID,
+	})
+	if err != nil {
+		p.l.Errorf("failed to get document by infoCard ID: %s", err.Error())
+
+		status := http.StatusInternalServerError
+		if errors.Is(err, pgx.ErrNoRows) {
+			status = http.StatusNotFound
+		}
+		c.AbortWithStatusJSON(status, gin.H{"error": "Failed to get info card document"})
+		return
+	}
+
+	_, err = p.checkpointService.CreatePassage(c.Request.Context(), &dto.CreatePassageRequest{
+		CheckpointID: 1,
+		DocumentID:   document.ID.Int(),
+		Type:         model.ToPassageTypeFromString(req.Type).Int(),
+		Time:         &req.Time,
+		IsSQUID:      true,
+	})
+	if err != nil {
+		p.l.Errorf("failed to create passage using SQUID: %s", err.Error())
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Failed to create passage using SQUID"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, "OK")
 }

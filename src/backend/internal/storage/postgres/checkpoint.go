@@ -48,12 +48,14 @@ func (c *checkpointStorageImpl) CreatePassage(ctx context.Context, request *dto.
 			documentIdField,
 			typeField,
 			timeField,
+			isSQUIDField,
 		).
 		Values(
 			request.CheckpointID,
 			request.DocumentID,
 			model.ToPassageTypeFromInt(request.Type).String(),
 			request.Time,
+			request.IsSQUID,
 		).
 		Suffix(returningPassageColumns())
 
@@ -74,6 +76,7 @@ func (c *checkpointStorageImpl) GetPassage(ctx context.Context, request *dto.Get
 			documentIdField,
 			typeField,
 			timeField,
+			isSQUIDField,
 		).
 		From(passageTable).
 		Where(squirrel.Eq{idField: request.PassageID})
@@ -113,6 +116,7 @@ func (c *checkpointStorageImpl) ListPassages(ctx context.Context, request *dto.L
 			documentIdField,
 			fullColName(passageTable, typeField),
 			timeField,
+			isSQUIDField,
 		).
 		From(passageTable).
 		Join(on(
@@ -188,6 +192,7 @@ func (c *checkpointStorageImpl) rowToPassageModel(row pgx.Row) (*model.Passage, 
 		&passage.DocumentID,
 		&passageType,
 		&passage.Time,
+		&passage.IsSQUID,
 	)
 	if err != nil {
 		return nil, err

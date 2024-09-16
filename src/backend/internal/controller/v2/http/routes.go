@@ -41,7 +41,7 @@ func setInfoCardRoute(
 	handler.GET("/infocards", i.ListFullInfoCards)
 	handler.GET("/infocards/:id", i.GetFullInfoCard)
 	handler.PATCH("/infocards/:id", i.ConfirmEmployeeInfoCard)
-	handler.GET("infocard-photos/:id", i.GetEmployeeInfoCardPhoto)
+	handler.GET("infocards/:id/photo", i.GetEmployeeInfoCardPhoto)
 }
 
 func setProfileRoute(
@@ -58,7 +58,7 @@ func setProfileRoute(
 	// https://restfulapi.net/resource-naming/#:~:text=than%20one%20archetype.-,2.1.1.%20document,-A%20document%20resource
 	handler.POST("/profile", p.FillProfile)
 	handler.GET("/profile", p.GetProfile)
-	handler.GET("/employee-photo", p.GetEmployeePhoto)
+	handler.GET("/profile/photo", p.GetEmployeePhoto)
 }
 
 func setPassageRoute(
@@ -71,6 +71,7 @@ func setPassageRoute(
 	p := admin.NewPassageController(l, documentService, checkpointService, authService)
 
 	handler.POST("/passages", p.CreatePassage)
+	handler.POST("/passages/squid", p.CreateSQUIDPassage)
 }
 
 func SetRoutes(

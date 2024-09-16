@@ -15,6 +15,8 @@ definitions:
         type: integer
       time:
         type: string
+      type:
+        type: string
     type: object
   admin.getFullInfoCardResponse:
     properties:
@@ -209,72 +211,6 @@ info:
   title: Идентификация на КПП
   version: "2.0"
 paths:
-  /employee-photo:
-    get:
-      description: Метод для получения фотографии своего профиля
-      produces:
-      - image/jpeg
-      - application/json
-      responses:
-        "200":
-          description: Фотография успешно получена
-          schema:
-            type: string
-        "400":
-          description: Некорректное тело запроса
-          schema:
-            $ref: '#/definitions/http.StatusBadRequest'
-        "401":
-          description: Авторизация неуспешна
-          schema:
-            $ref: '#/definitions/http.StatusUnauthorized'
-        "500":
-          description: Внутренняя ошибка получения фотографии
-          schema:
-            $ref: '#/definitions/http.StatusInternalServerError'
-      security:
-      - BearerAuth: []
-      summary: Получение фотографии своего профиля
-      tags:
-      - employee
-  /infocard-photos/{id}:
-    get:
-      description: Метод для получения элемента коллекции фотографий сотрудников
-      parameters:
-      - description: Идентификатор информационной карточки
-        in: path
-        name: id
-        required: true
-        type: string
-      produces:
-      - image/jpeg
-      - application/json
-      responses:
-        "200":
-          description: Фотография сотрудника успешно получена
-          schema:
-            type: string
-        "400":
-          description: Некорректное тело запроса
-          schema:
-            $ref: '#/definitions/http.StatusBadRequest'
-        "401":
-          description: Авторизация неуспешна
-          schema:
-            $ref: '#/definitions/http.StatusUnauthorized'
-        "404":
-          description: Карточка не найдена
-          schema:
-            $ref: '#/definitions/http.StatusNotFound'
-        "500":
-          description: Внутренняя ошибка получения фотографии пользователя
-          schema:
-            $ref: '#/definitions/http.StatusInternalServerError'
-      security:
-      - BearerAuth: []
-      summary: Получение элемента коллекции фотографий сотрудников
-      tags:
-      - admin
   /infocards:
     get:
       description: Метод для получения коллекции информационных карточек
@@ -374,6 +310,44 @@ paths:
       summary: Подтверждение информационной карточки сотрудника
       tags:
       - admin
+  /infocards/{id}/photo:
+    get:
+      description: Метод для получения элемента коллекции фотографий сотрудников
+      parameters:
+      - description: Идентификатор информационной карточки
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - image/jpeg
+      - application/json
+      responses:
+        "200":
+          description: Фотография сотрудника успешно получена
+          schema:
+            type: string
+        "400":
+          description: Некорректное тело запроса
+          schema:
+            $ref: '#/definitions/http.StatusBadRequest'
+        "401":
+          description: Авторизация неуспешна
+          schema:
+            $ref: '#/definitions/http.StatusUnauthorized'
+        "404":
+          description: Карточка не найдена
+          schema:
+            $ref: '#/definitions/http.StatusNotFound'
+        "500":
+          description: Внутренняя ошибка получения фотографии пользователя
+          schema:
+            $ref: '#/definitions/http.StatusInternalServerError'
+      security:
+      - BearerAuth: []
+      summary: Получение элемента коллекции фотографий сотрудников
+      tags:
+      - admin
   /login:
     post:
       description: Метод для входа в аккаунт пользователя
@@ -434,6 +408,42 @@ paths:
       security:
       - BearerAuth: []
       summary: Запись информации о проходе через КПП
+      tags:
+      - admin
+  /passages/squid:
+    post:
+      description: Метод для записи о проходе через КПП при помощи SQUID
+      parameters:
+      - description: Занесение информации о проходе через КПП при помощи SQUID
+        in: body
+        name: createPassageRequest
+        required: true
+        schema:
+          $ref: '#/definitions/admin.createSQUIDPassageRequest'
+      responses:
+        "201":
+          description: Данные успешно занесены
+          schema:
+            type: string
+        "400":
+          description: Некорректное тело запроса
+          schema:
+            $ref: '#/definitions/http.StatusBadRequest'
+        "401":
+          description: Авторизация неуспешна
+          schema:
+            $ref: '#/definitions/http.StatusUnauthorized'
+        "404":
+          description: Карточка не найдена
+          schema:
+            $ref: '#/definitions/http.StatusNotFound'
+        "500":
+          description: Внутренняя ошибка занесения информации о проходе через КПП
+          schema:
+            $ref: '#/definitions/http.StatusInternalServerError'
+      security:
+      - BearerAuth: []
+      summary: Запись информации о проходе через КПП при помощи SQUID
       tags:
       - admin
   /profile:
@@ -507,6 +517,34 @@ paths:
       summary: Заполнение профиля
       tags:
       - employee
+  /profile/photo:
+    get:
+      description: Метод для получения фотографии своего профиля
+      produces:
+      - image/jpeg
+      - application/json
+      responses:
+        "200":
+          description: Фотография успешно получена
+          schema:
+            type: string
+        "400":
+          description: Некорректное тело запроса
+          schema:
+            $ref: '#/definitions/http.StatusBadRequest'
+        "401":
+          description: Авторизация неуспешна
+          schema:
+            $ref: '#/definitions/http.StatusUnauthorized'
+        "500":
+          description: Внутренняя ошибка получения фотографии
+          schema:
+            $ref: '#/definitions/http.StatusInternalServerError'
+      security:
+      - BearerAuth: []
+      summary: Получение фотографии своего профиля
+      tags:
+      - employee
   /refresh:
     post:
       description: Метод для обновления токенов доступа пользователя
@@ -559,42 +597,6 @@ paths:
       summary: Регистрация пользователя
       tags:
       - auth
-  /squid-passages:
-    post:
-      description: Метод для записи о проходе через КПП при помощи SQUID
-      parameters:
-      - description: Занесение информации о проходе через КПП при помощи SQUID
-        in: body
-        name: createPassageRequest
-        required: true
-        schema:
-          $ref: '#/definitions/admin.createSQUIDPassageRequest'
-      responses:
-        "201":
-          description: Данные успешно занесены
-          schema:
-            type: string
-        "400":
-          description: Некорректное тело запроса
-          schema:
-            $ref: '#/definitions/http.StatusBadRequest'
-        "401":
-          description: Авторизация неуспешна
-          schema:
-            $ref: '#/definitions/http.StatusUnauthorized'
-        "404":
-          description: Карточка не найдена
-          schema:
-            $ref: '#/definitions/http.StatusNotFound'
-        "500":
-          description: Внутренняя ошибка занесения информации о проходе через КПП
-          schema:
-            $ref: '#/definitions/http.StatusInternalServerError'
-      security:
-      - BearerAuth: []
-      summary: Запись информации о проходе через КПП при помощи SQUID
-      tags:
-      - admin
 securityDefinitions:
   BearerAuth:
     in: header

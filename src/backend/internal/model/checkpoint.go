@@ -77,6 +77,7 @@ type Passage struct {
 	DocumentID   *DocumentID
 	Type         *PassageType
 	Time         *time.Time
+	IsSQUID      bool
 }
 
 type ShortPassage struct {

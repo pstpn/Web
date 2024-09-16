@@ -63,5 +63,6 @@ create table if not exists passage
     checkpoint_id int references checkpoint(id) on delete cascade,
     document_id int references document(id) on delete cascade,
     type text,
-    time timestamp
+    time timestamp,
+    is_squid boolean
 );

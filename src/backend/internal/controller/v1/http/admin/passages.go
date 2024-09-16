@@ -90,6 +90,7 @@ func (p *PassageController) CreatePassage(c *gin.Context) {
 		DocumentID:   document.ID.Int(),
 		Type:         model.ToPassageTypeFromString(req.Type).Int(),
 		Time:         &req.Time,
+		IsSQUID:      false,
 	})
 	if err != nil {
 		p.l.Errorf("failed to create passage: %s", err.Error())

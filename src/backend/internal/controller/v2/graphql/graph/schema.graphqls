@@ -33,6 +33,14 @@ type documentFull {
   fields: [keyValueFields!]
 }
 
+type passage {
+  id: Int!
+  documentID: Int!
+  type: String!
+  time: Time!
+  isSQUID: Boolean!
+}
+
 type passageShort {
   type: String!
   time: String!
@@ -129,17 +137,12 @@ input createPassageRequest {
 
 input createSQUIDPassageRequest {
   documentID: Int!
+  type: String!
   time: Time!
 }
 
 input getPassagesRequest {
   documentID: Int!
-}
-type Passage {
-  id: Int!
-  documentID: Int!
-  type: String!
-  time: Time!
 }
 
 input deletePassageRequest {
@@ -179,7 +182,7 @@ type Query {
   """
   Получение проходов сотрудников
   """
-  getPassages(req: getPassagesRequest!): [Passage!]
+  getPassages(req: getPassagesRequest!): [passage!]
 }
 
 ### Mutation requests ###
@@ -211,7 +214,7 @@ type Mutation {
   """
   Запись информации о проходе через КПП
   """
-  createPassage(req: createPassageRequest!): Passage!
+  createPassage(req: createPassageRequest!): passage!
   """
   Удаление информации о проходе через КПП
   """
@@ -219,7 +222,7 @@ type Mutation {
   """
   Запись информации о проходе через КПП при помощи SQUID
   """
-  createSQUIDPassage(req: createSQUIDPassageRequest!): Nil
+  createSQUIDPassage(req: createSQUIDPassageRequest!): passage!
 }
 
 #

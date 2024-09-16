@@ -9,13 +9,6 @@ import (
 type Mutation struct {
 }
 
-type Passage struct {
-	ID         int       `json:"id"`
-	DocumentID int       `json:"documentID"`
-	Type       string    `json:"type"`
-	Time       time.Time `json:"time"`
-}
-
 type Query struct {
 }
 
@@ -31,6 +24,7 @@ type CreatePassageRequest struct {
 
 type CreateSQUIDPassageRequest struct {
 	DocumentID int       `json:"documentID"`
+	Type       string    `json:"type"`
 	Time       time.Time `json:"time"`
 }
 
@@ -123,6 +117,14 @@ type LoginResponse struct {
 	AccessToken  string `json:"accessToken"`
 	RefreshToken string `json:"refreshToken"`
 	IsAdmin      bool   `json:"isAdmin"`
+}
+
+type Passage struct {
+	ID         int       `json:"id"`
+	DocumentID int       `json:"documentID"`
+	Type       string    `json:"type"`
+	Time       time.Time `json:"time"`
+	IsSquid    bool      `json:"isSQUID"`
 }
 
 type PassageShort struct {

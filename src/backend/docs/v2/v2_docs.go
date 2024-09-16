@@ -15,109 +15,6 @@ const docTemplatev2 = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/employee-photo": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Метод для получения фотографии своего профиля",
-                "produces": [
-                    "image/jpeg",
-                    "application/json"
-                ],
-                "tags": [
-                    "employee"
-                ],
-                "summary": "Получение фотографии своего профиля",
-                "responses": {
-                    "200": {
-                        "description": "Фотография успешно получена",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "400": {
-                        "description": "Некорректное тело запроса",
-                        "schema": {
-                            "$ref": "#/definitions/http.StatusBadRequest"
-                        }
-                    },
-                    "401": {
-                        "description": "Авторизация неуспешна",
-                        "schema": {
-                            "$ref": "#/definitions/http.StatusUnauthorized"
-                        }
-                    },
-                    "500": {
-                        "description": "Внутренняя ошибка получения фотографии",
-                        "schema": {
-                            "$ref": "#/definitions/http.StatusInternalServerError"
-                        }
-                    }
-                }
-            }
-        },
-        "/infocard-photos/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Метод для получения элемента коллекции фотографий сотрудников",
-                "produces": [
-                    "image/jpeg",
-                    "application/json"
-                ],
-                "tags": [
-                    "admin"
-                ],
-                "summary": "Получение элемента коллекции фотографий сотрудников",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Идентификатор информационной карточки",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Фотография сотрудника успешно получена",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "400": {
-                        "description": "Некорректное тело запроса",
-                        "schema": {
-                            "$ref": "#/definitions/http.StatusBadRequest"
-                        }
-                    },
-                    "401": {
-                        "description": "Авторизация неуспешна",
-                        "schema": {
-                            "$ref": "#/definitions/http.StatusUnauthorized"
-                        }
-                    },
-                    "404": {
-                        "description": "Карточка не найдена",
-                        "schema": {
-                            "$ref": "#/definitions/http.StatusNotFound"
-                        }
-                    },
-                    "500": {
-                        "description": "Внутренняя ошибка получения фотографии пользователя",
-                        "schema": {
-                            "$ref": "#/definitions/http.StatusInternalServerError"
-                        }
-                    }
-                }
-            }
-        },
         "/infocards": {
             "get": {
                 "security": [
@@ -274,6 +171,65 @@ const docTemplatev2 = `{
                 }
             }
         },
+        "/infocards/{id}/photo": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Метод для получения элемента коллекции фотографий сотрудников",
+                "produces": [
+                    "image/jpeg",
+                    "application/json"
+                ],
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Получение элемента коллекции фотографий сотрудников",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Идентификатор информационной карточки",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Фотография сотрудника успешно получена",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Некорректное тело запроса",
+                        "schema": {
+                            "$ref": "#/definitions/http.StatusBadRequest"
+                        }
+                    },
+                    "401": {
+                        "description": "Авторизация неуспешна",
+                        "schema": {
+                            "$ref": "#/definitions/http.StatusUnauthorized"
+                        }
+                    },
+                    "404": {
+                        "description": "Карточка не найдена",
+                        "schema": {
+                            "$ref": "#/definitions/http.StatusNotFound"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка получения фотографии пользователя",
+                        "schema": {
+                            "$ref": "#/definitions/http.StatusInternalServerError"
+                        }
+                    }
+                }
+            }
+        },
         "/login": {
             "post": {
                 "description": "Метод для входа в аккаунт пользователя",
@@ -334,6 +290,63 @@ const docTemplatev2 = `{
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/admin.createPassageRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Данные успешно занесены",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Некорректное тело запроса",
+                        "schema": {
+                            "$ref": "#/definitions/http.StatusBadRequest"
+                        }
+                    },
+                    "401": {
+                        "description": "Авторизация неуспешна",
+                        "schema": {
+                            "$ref": "#/definitions/http.StatusUnauthorized"
+                        }
+                    },
+                    "404": {
+                        "description": "Карточка не найдена",
+                        "schema": {
+                            "$ref": "#/definitions/http.StatusNotFound"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка занесения информации о проходе через КПП",
+                        "schema": {
+                            "$ref": "#/definitions/http.StatusInternalServerError"
+                        }
+                    }
+                }
+            }
+        },
+        "/passages/squid": {
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Метод для записи о проходе через КПП при помощи SQUID",
+                "tags": [
+                    "admin"
+                ],
+                "summary": "Запись информации о проходе через КПП при помощи SQUID",
+                "parameters": [
+                    {
+                        "description": "Занесение информации о проходе через КПП при помощи SQUID",
+                        "name": "createPassageRequest",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/admin.createSQUIDPassageRequest"
                         }
                     }
                 ],
@@ -483,6 +496,50 @@ const docTemplatev2 = `{
                 }
             }
         },
+        "/profile/photo": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Метод для получения фотографии своего профиля",
+                "produces": [
+                    "image/jpeg",
+                    "application/json"
+                ],
+                "tags": [
+                    "employee"
+                ],
+                "summary": "Получение фотографии своего профиля",
+                "responses": {
+                    "200": {
+                        "description": "Фотография успешно получена",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Некорректное тело запроса",
+                        "schema": {
+                            "$ref": "#/definitions/http.StatusBadRequest"
+                        }
+                    },
+                    "401": {
+                        "description": "Авторизация неуспешна",
+                        "schema": {
+                            "$ref": "#/definitions/http.StatusUnauthorized"
+                        }
+                    },
+                    "500": {
+                        "description": "Внутренняя ошибка получения фотографии",
+                        "schema": {
+                            "$ref": "#/definitions/http.StatusInternalServerError"
+                        }
+                    }
+                }
+            }
+        },
         "/refresh": {
             "post": {
                 "description": "Метод для обновления токенов доступа пользователя",
@@ -562,63 +619,6 @@ const docTemplatev2 = `{
                     }
                 }
             }
-        },
-        "/squid-passages": {
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Метод для записи о проходе через КПП при помощи SQUID",
-                "tags": [
-                    "admin"
-                ],
-                "summary": "Запись информации о проходе через КПП при помощи SQUID",
-                "parameters": [
-                    {
-                        "description": "Занесение информации о проходе через КПП при помощи SQUID",
-                        "name": "createPassageRequest",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/admin.createSQUIDPassageRequest"
-                        }
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Данные успешно занесены",
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    "400": {
-                        "description": "Некорректное тело запроса",
-                        "schema": {
-                            "$ref": "#/definitions/http.StatusBadRequest"
-                        }
-                    },
-                    "401": {
-                        "description": "Авторизация неуспешна",
-                        "schema": {
-                            "$ref": "#/definitions/http.StatusUnauthorized"
-                        }
-                    },
-                    "404": {
-                        "description": "Карточка не найдена",
-                        "schema": {
-                            "$ref": "#/definitions/http.StatusNotFound"
-                        }
-                    },
-                    "500": {
-                        "description": "Внутренняя ошибка занесения информации о проходе через КПП",
-                        "schema": {
-                            "$ref": "#/definitions/http.StatusInternalServerError"
-                        }
-                    }
-                }
-            }
         }
     },
     "definitions": {
@@ -643,6 +643,9 @@ const docTemplatev2 = `{
                     "type": "integer"
                 },
                 "time": {
+                    "type": "string"
+                },
+                "type": {
                     "type": "string"
                 }
             }

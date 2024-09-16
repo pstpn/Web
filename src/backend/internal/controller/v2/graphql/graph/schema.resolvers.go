@@ -46,6 +46,7 @@ func (r *mutationResolver) CreatePassage(ctx context.Context, req model.CreatePa
 		DocumentID:   models.ToDocumentID(int64(req.DocumentID)).Int(),
 		Type:         models.ToPassageTypeFromString(req.Type).Int(),
 		Time:         &req.Time,
+		IsSQUID:      false,
 	})
 	if err != nil {
 		return nil, err
@@ -56,6 +57,7 @@ func (r *mutationResolver) CreatePassage(ctx context.Context, req model.CreatePa
 		DocumentID: int(passage.DocumentID.Int()),
 		Type:       passage.Type.String(),
 		Time:       *passage.Time,
+		IsSquid:    passage.IsSQUID,
 	}, err
 }
 
@@ -72,8 +74,25 @@ func (r *mutationResolver) DeletePassage(ctx context.Context, req model.DeletePa
 }
 
 // CreateSQUIDPassage is the resolver for the createSQUIDPassage field.
-func (r *mutationResolver) CreateSQUIDPassage(ctx context.Context, req model.CreateSQUIDPassageRequest) (*string, error) {
-	panic(fmt.Errorf("not implemented: CreateSQUIDPassage - createSQUIDPassage"))
+func (r *mutationResolver) CreateSQUIDPassage(ctx context.Context, req model.CreateSQUIDPassageRequest) (*model.Passage, error) {
+	passage, err := r.CheckpointService.CreatePassage(ctx, &dto.CreatePassageRequest{
+		CheckpointID: 1,
+		DocumentID:   models.ToDocumentID(int64(req.DocumentID)).Int(),
+		Type:         models.ToPassageTypeFromString(req.Type).Int(),
+		Time:         &req.Time,
+		IsSQUID:      true,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.Passage{
+		ID:         int(passage.ID.Int()),
+		DocumentID: int(passage.DocumentID.Int()),
+		Type:       passage.Type.String(),
+		Time:       *passage.Time,
+		IsSquid:    passage.IsSQUID,
+	}, err
 }
 
 // Healthcheck is the resolver for the healthcheck field.
@@ -123,6 +142,7 @@ func (r *queryResolver) GetPassages(ctx context.Context, req model.GetPassagesRe
 			DocumentID: int(passage.DocumentID.Int()),
 			Type:       passage.Type.String(),
 			Time:       *passage.Time,
+			IsSquid:    passage.IsSQUID,
 		}
 	}
 

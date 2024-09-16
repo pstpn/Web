@@ -13,6 +13,7 @@ type CreatePassageRequest struct {
 	DocumentID   int64
 	Type         int64
 	Time         *time.Time
+	IsSQUID      bool
 }
 
 type GetPassageRequest struct {

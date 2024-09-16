@@ -39,6 +39,7 @@ const (
 	checkpointIdField      = "checkpoint_id"
 	timeField              = "time"
 	keyField               = "key"
+	isSQUIDField           = "is_squid"
 )
 
 func fullColName(tableName, columnName string) string {
@@ -111,6 +112,7 @@ func returningPassageColumns() string {
 		documentIdField,
 		typeField,
 		timeField,
+		isSQUIDField,
 	}, ","))
 }
 

@@ -248,7 +248,7 @@ func (p *ProfileController) GetProfile(c *gin.Context) {
 //	@Failure		401	{object}	http.StatusUnauthorized			"Авторизация неуспешна"
 //	@Failure		500	{object}	http.StatusInternalServerError	"Внутренняя ошибка получения фотографии"
 //	@Security		BearerAuth
-//	@Router			/employee-photo [get]
+//	@Router			/profile/photo [get]
 func (p *ProfileController) GetEmployeePhoto(c *gin.Context) {
 	payload, err := httputils.VerifyAccessToken(c, p.l, p.authService)
 	if err != nil {
