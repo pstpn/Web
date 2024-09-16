@@ -6,9 +6,12 @@ package graph
 
 import (
 	"context"
-	"course/internal/controller/v2/graphql/graph/model"
 	"fmt"
 	"time"
+
+	"course/internal/controller/v2/graphql/graph/model"
+	models "course/internal/model"
+	"course/internal/service/dto"
 )
 
 // Register is the resolver for the register field.
@@ -37,8 +40,35 @@ func (r *mutationResolver) ConfirmEmployeeInfoCard(ctx context.Context, req mode
 }
 
 // CreatePassage is the resolver for the createPassage field.
-func (r *mutationResolver) CreatePassage(ctx context.Context, req model.CreatePassageRequest) (*string, error) {
-	panic(fmt.Errorf("not implemented: CreatePassage - createPassage"))
+func (r *mutationResolver) CreatePassage(ctx context.Context, req model.CreatePassageRequest) (*model.Passage, error) {
+	passage, err := r.CheckpointService.CreatePassage(ctx, &dto.CreatePassageRequest{
+		CheckpointID: 1,
+		DocumentID:   models.ToDocumentID(int64(req.DocumentID)).Int(),
+		Type:         models.ToPassageTypeFromString(req.Type).Int(),
+		Time:         &req.Time,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.Passage{
+		ID:         int(passage.ID.Int()),
+		DocumentID: int(passage.DocumentID.Int()),
+		Type:       passage.Type.String(),
+		Time:       *passage.Time,
+	}, err
+}
+
+// DeletePassage is the resolver for the deletePassage field.
+func (r *mutationResolver) DeletePassage(ctx context.Context, req model.DeletePassageRequest) (string, error) {
+	err := r.CheckpointService.DeletePassage(ctx, &dto.DeletePassageRequest{
+		PassageID: int64(req.ID),
+	})
+	if err != nil {
+		return "ERROR", err
+	}
+
+	return "OK", err
 }
 
 // CreateSQUIDPassage is the resolver for the createSQUIDPassage field.
@@ -75,6 +105,28 @@ func (r *queryResolver) GetFullInfoCard(ctx context.Context, req model.GetFullIn
 // GetEmployeeInfoCardPhoto is the resolver for the getEmployeeInfoCardPhoto field.
 func (r *queryResolver) GetEmployeeInfoCardPhoto(ctx context.Context, req model.GetEmployeeInfoCardPhotoRequest) (*string, error) {
 	panic(fmt.Errorf("not implemented: GetEmployeeInfoCardPhoto - getEmployeeInfoCardPhoto"))
+}
+
+// GetPassages is the resolver for the getPassages field.
+func (r *queryResolver) GetPassages(ctx context.Context, req model.GetPassagesRequest) ([]*model.Passage, error) {
+	passages, err := r.CheckpointService.ListPassages(ctx, &dto.ListPassagesRequest{
+		DocumentID: int64(req.DocumentID),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	modelPassages := make([]*model.Passage, len(passages))
+	for i, passage := range passages {
+		modelPassages[i] = &model.Passage{
+			ID:         int(passage.ID.Int()),
+			DocumentID: int(passage.DocumentID.Int()),
+			Type:       passage.Type.String(),
+			Time:       *passage.Time,
+		}
+	}
+
+	return modelPassages, err
 }
 
 // Mutation returns MutationResolver implementation.

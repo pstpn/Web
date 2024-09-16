@@ -91,6 +91,9 @@ func main() {
 	handler := gin.New()
 	con := controller.NewRouter(handler)
 
+	// Set GraphQL
+	con.SetGraphQL(checkpointService)
+
 	// Set routes
 	con.SetV1Routes(l, infoCardService, documentService, fieldService, checkpointService, photoService, authService)
 	con.SetV2Routes(l, infoCardService, documentService, fieldService, checkpointService, photoService, authService)

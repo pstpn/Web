@@ -31,10 +31,6 @@ func NewRouter(handler *gin.Engine) *Controller {
 	// Disable CORS
 	handler.OPTIONS("/*any", httputils.DisableCors)
 
-	// GraphQL API
-	graphqlv1.Handle(handler)
-	graphqlv2.Handle(handler)
-
 	// Swagger settings
 	docsv1.SwaggerInfov1.BasePath = "/api/v1"
 	docsv2.SwaggerInfov2.BasePath = "/api/v2"
@@ -57,6 +53,12 @@ func NewRouter(handler *gin.Engine) *Controller {
 			"v2": v2,
 		},
 	}
+}
+
+func (c *Controller) SetGraphQL(checkpointService service.CheckpointService) {
+	// GraphQL API
+	graphqlv1.Handle(c.handler)
+	graphqlv2.Handle(c.handler, checkpointService)
 }
 
 // healthCheck godoc

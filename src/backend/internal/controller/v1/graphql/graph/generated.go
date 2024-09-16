@@ -1114,7 +1114,7 @@ func (ec *executionContext) _Mutation_fillProfile(ctx context.Context, field gra
 	}
 	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalONull2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalONil2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_fillProfile(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1124,7 +1124,7 @@ func (ec *executionContext) fieldContext_Mutation_fillProfile(ctx context.Contex
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Null does not have child fields")
+			return nil, errors.New("field of type Nil does not have child fields")
 		},
 	}
 	defer func() {
@@ -1166,7 +1166,7 @@ func (ec *executionContext) _Mutation_confirmEmployeeInfoCard(ctx context.Contex
 	}
 	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalONull2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalONil2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_confirmEmployeeInfoCard(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1176,7 +1176,7 @@ func (ec *executionContext) fieldContext_Mutation_confirmEmployeeInfoCard(ctx co
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Null does not have child fields")
+			return nil, errors.New("field of type Nil does not have child fields")
 		},
 	}
 	defer func() {
@@ -1218,7 +1218,7 @@ func (ec *executionContext) _Mutation_createPassage(ctx context.Context, field g
 	}
 	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalONull2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalONil2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createPassage(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1228,7 +1228,7 @@ func (ec *executionContext) fieldContext_Mutation_createPassage(ctx context.Cont
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Null does not have child fields")
+			return nil, errors.New("field of type Nil does not have child fields")
 		},
 	}
 	defer func() {
@@ -7041,7 +7041,7 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
-func (ec *executionContext) unmarshalONull2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
+func (ec *executionContext) unmarshalONil2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -7049,7 +7049,7 @@ func (ec *executionContext) unmarshalONull2ᚖstring(ctx context.Context, v inte
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalONull2ᚖstring(ctx context.Context, sel ast.SelectionSet, v *string) graphql.Marshaler {
+func (ec *executionContext) marshalONil2ᚖstring(ctx context.Context, sel ast.SelectionSet, v *string) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

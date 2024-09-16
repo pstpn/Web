@@ -214,7 +214,7 @@ export default {
       const formattedTime = `${this.padZero(now.getHours())}:${this.padZero(now.getMinutes())}:${this.padZero(now.getSeconds())} (${this.padZero(now.getDate())}.${this.padZero(now.getMonth() + 1)}.${now.getFullYear()})`;
       this.$store.dispatch('employee/createEmployeePassage', {
         infoCardID: this.selectedEmployee.id,
-        documentType: this.selectedEmployeeDocument.data.documentType,
+        type: type,
         time: now,
       }).then(() => {
         this.addPassageToDictionary(type, formattedTime);

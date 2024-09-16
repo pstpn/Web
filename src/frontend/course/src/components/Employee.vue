@@ -174,11 +174,13 @@ export default {
 
       const formData = new FormData();
       formData.append('image', this.image);
-      formData.append('profileData', new Blob([JSON.stringify({
-        serialNumber: this.$refs.form.values.serialNumber,
-        documentType: this.selectedType,
-        documentFields: this.documentFields,
-      })], { type: 'application/json' }));
+      formData.append('serialNumber', this.$refs.form.values.serialNumber);
+      formData.append('documentType', this.selectedType);
+
+      let fields = '';
+      for (let i = 0; i < this.documentFields.length; ++i)
+        fields += this.documentFields[i].type + ',' + this.documentFields[i].value + ';';
+      formData.append('documentFields', fields.slice(0, -1));
 
       this.loading = true;
 

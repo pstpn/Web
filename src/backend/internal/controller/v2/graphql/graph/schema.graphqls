@@ -1,5 +1,6 @@
 scalar Time
-scalar Null
+scalar Nil
+scalar Error
 scalar directus_files
 
 ### Model types ###
@@ -121,14 +122,28 @@ input getEmployeeInfoCardPhotoRequest {
 }
 
 input createPassageRequest {
-  infoCardID: ID!
-  documentType: String!
+  documentID: Int!
+  type: String!
   time: Time!
 }
 
 input createSQUIDPassageRequest {
-  infoCardID: ID!
+  documentID: Int!
   time: Time!
+}
+
+input getPassagesRequest {
+  documentID: Int!
+}
+type Passage {
+  id: Int!
+  documentID: Int!
+  type: String!
+  time: Time!
+}
+
+input deletePassageRequest {
+  id: Int!
 }
 
 ### Query requests ###
@@ -160,6 +175,11 @@ type Query {
   Получение элемента коллекции фотографий сотрудников
   """
   getEmployeeInfoCardPhoto(req: getEmployeeInfoCardPhotoRequest!): directus_files
+
+  """
+  Получение проходов сотрудников
+  """
+  getPassages(req: getPassagesRequest!): [Passage!]
 }
 
 ### Mutation requests ###
@@ -181,19 +201,50 @@ type Mutation {
   """
   Заполнение профиля
   """
-  fillProfile(req: fillProfileRequest!): Null
+  fillProfile(req: fillProfileRequest!): Nil
 
   """
   Подтверждение информационной карточки сотрудника
   """
-  confirmEmployeeInfoCard(req: confirmEmployeeInfoCardRequest!): Null
+  confirmEmployeeInfoCard(req: confirmEmployeeInfoCardRequest!): Nil
 
   """
   Запись информации о проходе через КПП
   """
-  createPassage(req: createPassageRequest!): Null
+  createPassage(req: createPassageRequest!): Passage!
+  """
+  Удаление информации о проходе через КПП
+  """
+  deletePassage(req: deletePassageRequest!): Error!
   """
   Запись информации о проходе через КПП при помощи SQUID
   """
-  createSQUIDPassage(req: createSQUIDPassageRequest!): Null
+  createSQUIDPassage(req: createSQUIDPassageRequest!): Nil
 }
+
+#
+# EXAMPLES
+#
+#query GetPassages {
+#  getPassages(req: {
+#    documentID: 2
+#  }) {
+#    id,
+#    documentID,
+#    type,
+#    time
+#  }
+#}
+#
+#mutation CreatePassage($createRequest: createPassageRequest!) {
+#  createPassage(req: $createRequest) {
+#    id,
+#    documentID,
+#    type,
+#    time
+#  }
+#}
+#
+#mutation DeletePassage($deleteRequest:deletePassageRequest!) {
+#  deletePassage(req: $deleteRequest)
+#}

@@ -56,6 +56,10 @@ func ToPassageTypeFromString(passage string) *PassageType {
 	return &passageType
 }
 
+func (p *PassageType) Int() int64 {
+	return int64(*p)
+}
+
 func (p *PassageType) String() string {
 	switch *p {
 	case Entrance:

@@ -9,6 +9,13 @@ import (
 type Mutation struct {
 }
 
+type Passage struct {
+	ID         int       `json:"id"`
+	DocumentID int       `json:"documentID"`
+	Type       string    `json:"type"`
+	Time       time.Time `json:"time"`
+}
+
 type Query struct {
 }
 
@@ -17,14 +24,18 @@ type ConfirmEmployeeInfoCardRequest struct {
 }
 
 type CreatePassageRequest struct {
-	InfoCardID   string    `json:"infoCardID"`
-	DocumentType string    `json:"documentType"`
-	Time         time.Time `json:"time"`
+	DocumentID int       `json:"documentID"`
+	Type       string    `json:"type"`
+	Time       time.Time `json:"time"`
 }
 
 type CreateSQUIDPassageRequest struct {
-	InfoCardID string    `json:"infoCardID"`
+	DocumentID int       `json:"documentID"`
 	Time       time.Time `json:"time"`
+}
+
+type DeletePassageRequest struct {
+	ID int `json:"id"`
 }
 
 type DocumentData struct {
@@ -58,6 +69,10 @@ type GetFullInfoCardRequest struct {
 type GetFullInfoCardResponse struct {
 	Document *DocumentFull   `json:"document,omitempty"`
 	Passages []*PassageShort `json:"passages,omitempty"`
+}
+
+type GetPassagesRequest struct {
+	DocumentID int `json:"documentID"`
 }
 
 type GetProfileRequest struct {

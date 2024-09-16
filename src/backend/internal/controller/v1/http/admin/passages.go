@@ -37,9 +37,9 @@ func NewPassageController(
 }
 
 type createPassageRequest struct {
-	InfoCardID   int64     `json:"infoCardID"`
-	DocumentType string    `json:"documentType"`
-	Time         time.Time `json:"time"`
+	InfoCardID int64     `json:"infoCardID"`
+	Type       string    `json:"type"`
+	Time       time.Time `json:"time"`
 }
 
 // CreatePassage godoc
@@ -57,7 +57,7 @@ type createPassageRequest struct {
 //	@Router			/passages [post]
 func (p *PassageController) CreatePassage(c *gin.Context) {
 	httputils.DisableCors(c)
-	
+
 	_, err := httputils.VerifyAccessToken(c, p.l, p.authService)
 	if err != nil {
 		return
@@ -88,7 +88,7 @@ func (p *PassageController) CreatePassage(c *gin.Context) {
 	_, err = p.checkpointService.CreatePassage(c.Request.Context(), &dto.CreatePassageRequest{
 		CheckpointID: 1,
 		DocumentID:   document.ID.Int(),
-		Type:         model.ToDocumentTypeFromString(req.DocumentType).Int(),
+		Type:         model.ToPassageTypeFromString(req.Type).Int(),
 		Time:         &req.Time,
 	})
 	if err != nil {

@@ -1,5 +1,5 @@
 scalar Time
-scalar Null
+scalar Nil
 scalar directus_files
 
 ### Model types ###
@@ -176,15 +176,15 @@ type Mutation {
   """
   Заполнение профиля
   """
-  fillProfile(req: fillProfileRequest!): Null
+  fillProfile(req: fillProfileRequest!): Nil
 
   """
   Подтверждение информационной карточки сотрудника
   """
-  confirmEmployeeInfoCard(req: confirmEmployeeInfoCardRequest!): Null
+  confirmEmployeeInfoCard(req: confirmEmployeeInfoCardRequest!): Nil
 
   """
   Запись информации о проходе через КПП
   """
-  createPassage(req: createPassageRequest!): Null
+  createPassage(req: createPassageRequest!): Nil
 }

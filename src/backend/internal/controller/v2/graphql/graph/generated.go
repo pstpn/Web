@@ -52,16 +52,25 @@ type ComplexityRoot struct {
 		ConfirmEmployeeInfoCard func(childComplexity int, req model.ConfirmEmployeeInfoCardRequest) int
 		CreatePassage           func(childComplexity int, req model.CreatePassageRequest) int
 		CreateSQUIDPassage      func(childComplexity int, req model.CreateSQUIDPassageRequest) int
+		DeletePassage           func(childComplexity int, req model.DeletePassageRequest) int
 		FillProfile             func(childComplexity int, req model.FillProfileRequest) int
 		Login                   func(childComplexity int, req model.LoginRequest) int
 		RefreshTokens           func(childComplexity int, req model.RefreshTokensRequest) int
 		Register                func(childComplexity int, req model.RegisterRequest) int
 	}
 
+	Passage struct {
+		DocumentID func(childComplexity int) int
+		ID         func(childComplexity int) int
+		Time       func(childComplexity int) int
+		Type       func(childComplexity int) int
+	}
+
 	Query struct {
 		GetEmployeeInfoCardPhoto func(childComplexity int, req model.GetEmployeeInfoCardPhotoRequest) int
 		GetEmployeePhoto         func(childComplexity int, req model.GetEmployeePhotoRequest) int
 		GetFullInfoCard          func(childComplexity int, req model.GetFullInfoCardRequest) int
+		GetPassages              func(childComplexity int, req model.GetPassagesRequest) int
 		GetProfile               func(childComplexity int, req model.GetProfileRequest) int
 		Healthcheck              func(childComplexity int) int
 		ListFullInfoCards        func(childComplexity int, req model.ListFullInfoCardsRequest) int
@@ -141,7 +150,8 @@ type MutationResolver interface {
 	RefreshTokens(ctx context.Context, req model.RefreshTokensRequest) (*model.RefreshTokensResponse, error)
 	FillProfile(ctx context.Context, req model.FillProfileRequest) (*string, error)
 	ConfirmEmployeeInfoCard(ctx context.Context, req model.ConfirmEmployeeInfoCardRequest) (*string, error)
-	CreatePassage(ctx context.Context, req model.CreatePassageRequest) (*string, error)
+	CreatePassage(ctx context.Context, req model.CreatePassageRequest) (*model.Passage, error)
+	DeletePassage(ctx context.Context, req model.DeletePassageRequest) (string, error)
 	CreateSQUIDPassage(ctx context.Context, req model.CreateSQUIDPassageRequest) (*string, error)
 }
 type QueryResolver interface {
@@ -151,6 +161,7 @@ type QueryResolver interface {
 	ListFullInfoCards(ctx context.Context, req model.ListFullInfoCardsRequest) (*model.ListFullInfoCardsResponse, error)
 	GetFullInfoCard(ctx context.Context, req model.GetFullInfoCardRequest) (*model.GetProfileResponse, error)
 	GetEmployeeInfoCardPhoto(ctx context.Context, req model.GetEmployeeInfoCardPhotoRequest) (*string, error)
+	GetPassages(ctx context.Context, req model.GetPassagesRequest) ([]*model.Passage, error)
 }
 
 type executableSchema struct {
@@ -208,6 +219,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CreateSQUIDPassage(childComplexity, args["req"].(model.CreateSQUIDPassageRequest)), true
 
+	case "Mutation.deletePassage":
+		if e.complexity.Mutation.DeletePassage == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_deletePassage_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.DeletePassage(childComplexity, args["req"].(model.DeletePassageRequest)), true
+
 	case "Mutation.fillProfile":
 		if e.complexity.Mutation.FillProfile == nil {
 			break
@@ -256,6 +279,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.Register(childComplexity, args["req"].(model.RegisterRequest)), true
 
+	case "Passage.documentID":
+		if e.complexity.Passage.DocumentID == nil {
+			break
+		}
+
+		return e.complexity.Passage.DocumentID(childComplexity), true
+
+	case "Passage.id":
+		if e.complexity.Passage.ID == nil {
+			break
+		}
+
+		return e.complexity.Passage.ID(childComplexity), true
+
+	case "Passage.time":
+		if e.complexity.Passage.Time == nil {
+			break
+		}
+
+		return e.complexity.Passage.Time(childComplexity), true
+
+	case "Passage.type":
+		if e.complexity.Passage.Type == nil {
+			break
+		}
+
+		return e.complexity.Passage.Type(childComplexity), true
+
 	case "Query.getEmployeeInfoCardPhoto":
 		if e.complexity.Query.GetEmployeeInfoCardPhoto == nil {
 			break
@@ -291,6 +342,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.GetFullInfoCard(childComplexity, args["req"].(model.GetFullInfoCardRequest)), true
+
+	case "Query.getPassages":
+		if e.complexity.Query.GetPassages == nil {
+			break
+		}
+
+		args, err := ec.field_Query_getPassages_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.GetPassages(childComplexity, args["req"].(model.GetPassagesRequest)), true
 
 	case "Query.getProfile":
 		if e.complexity.Query.GetProfile == nil {
@@ -572,10 +635,12 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputconfirmEmployeeInfoCardRequest,
 		ec.unmarshalInputcreatePassageRequest,
 		ec.unmarshalInputcreateSQUIDPassageRequest,
+		ec.unmarshalInputdeletePassageRequest,
 		ec.unmarshalInputfillProfileRequest,
 		ec.unmarshalInputgetEmployeeInfoCardPhotoRequest,
 		ec.unmarshalInputgetEmployeePhotoRequest,
 		ec.unmarshalInputgetFullInfoCardRequest,
+		ec.unmarshalInputgetPassagesRequest,
 		ec.unmarshalInputgetProfileRequest,
 		ec.unmarshalInputlistFullInfoCardsRequest,
 		ec.unmarshalInputloginRequest,
@@ -742,6 +807,21 @@ func (ec *executionContext) field_Mutation_createSQUIDPassage_args(ctx context.C
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_deletePassage_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.DeletePassageRequest
+	if tmp, ok := rawArgs["req"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("req"))
+		arg0, err = ec.unmarshalNdeletePassageRequest2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐDeletePassageRequest(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["req"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_fillProfile_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -854,6 +934,21 @@ func (ec *executionContext) field_Query_getFullInfoCard_args(ctx context.Context
 	if tmp, ok := rawArgs["req"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("req"))
 		arg0, err = ec.unmarshalNgetFullInfoCardRequest2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐGetFullInfoCardRequest(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["req"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_getPassages_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 model.GetPassagesRequest
+	if tmp, ok := rawArgs["req"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("req"))
+		arg0, err = ec.unmarshalNgetPassagesRequest2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐGetPassagesRequest(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1144,7 +1239,7 @@ func (ec *executionContext) _Mutation_fillProfile(ctx context.Context, field gra
 	}
 	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalONull2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalONil2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_fillProfile(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1154,7 +1249,7 @@ func (ec *executionContext) fieldContext_Mutation_fillProfile(ctx context.Contex
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Null does not have child fields")
+			return nil, errors.New("field of type Nil does not have child fields")
 		},
 	}
 	defer func() {
@@ -1196,7 +1291,7 @@ func (ec *executionContext) _Mutation_confirmEmployeeInfoCard(ctx context.Contex
 	}
 	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalONull2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalONil2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_confirmEmployeeInfoCard(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1206,7 +1301,7 @@ func (ec *executionContext) fieldContext_Mutation_confirmEmployeeInfoCard(ctx co
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Null does not have child fields")
+			return nil, errors.New("field of type Nil does not have child fields")
 		},
 	}
 	defer func() {
@@ -1244,11 +1339,14 @@ func (ec *executionContext) _Mutation_createPassage(ctx context.Context, field g
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.(*model.Passage)
 	fc.Result = res
-	return ec.marshalONull2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalNPassage2ᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐPassage(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createPassage(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1258,7 +1356,17 @@ func (ec *executionContext) fieldContext_Mutation_createPassage(ctx context.Cont
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Null does not have child fields")
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Passage_id(ctx, field)
+			case "documentID":
+				return ec.fieldContext_Passage_documentID(ctx, field)
+			case "type":
+				return ec.fieldContext_Passage_type(ctx, field)
+			case "time":
+				return ec.fieldContext_Passage_time(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Passage", field.Name)
 		},
 	}
 	defer func() {
@@ -1269,6 +1377,61 @@ func (ec *executionContext) fieldContext_Mutation_createPassage(ctx context.Cont
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_createPassage_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_deletePassage(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_deletePassage(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Mutation().DeletePassage(rctx, fc.Args["req"].(model.DeletePassageRequest))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNError2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_deletePassage(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Error does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_deletePassage_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -1300,7 +1463,7 @@ func (ec *executionContext) _Mutation_createSQUIDPassage(ctx context.Context, fi
 	}
 	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalONull2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalONil2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_createSQUIDPassage(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1310,7 +1473,7 @@ func (ec *executionContext) fieldContext_Mutation_createSQUIDPassage(ctx context
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Null does not have child fields")
+			return nil, errors.New("field of type Nil does not have child fields")
 		},
 	}
 	defer func() {
@@ -1323,6 +1486,182 @@ func (ec *executionContext) fieldContext_Mutation_createSQUIDPassage(ctx context
 	if fc.Args, err = ec.field_Mutation_createSQUIDPassage_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Passage_id(ctx context.Context, field graphql.CollectedField, obj *model.Passage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Passage_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Passage_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Passage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Passage_documentID(ctx context.Context, field graphql.CollectedField, obj *model.Passage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Passage_documentID(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DocumentID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Passage_documentID(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Passage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Passage_type(ctx context.Context, field graphql.CollectedField, obj *model.Passage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Passage_type(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Type, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Passage_type(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Passage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Passage_time(ctx context.Context, field graphql.CollectedField, obj *model.Passage) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Passage_time(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Time, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(time.Time)
+	fc.Result = res
+	return ec.marshalNTime2timeᚐTime(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Passage_time(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Passage",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Time does not have child fields")
+		},
 	}
 	return fc, nil
 }
@@ -1659,6 +1998,68 @@ func (ec *executionContext) fieldContext_Query_getEmployeeInfoCardPhoto(ctx cont
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_getEmployeeInfoCardPhoto_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_getPassages(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_getPassages(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().GetPassages(rctx, fc.Args["req"].(model.GetPassagesRequest))
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.Passage)
+	fc.Result = res
+	return ec.marshalOPassage2ᚕᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐPassageᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_getPassages(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Passage_id(ctx, field)
+			case "documentID":
+				return ec.fieldContext_Passage_documentID(ctx, field)
+			case "type":
+				return ec.fieldContext_Passage_type(ctx, field)
+			case "time":
+				return ec.fieldContext_Passage_time(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Passage", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_getPassages_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -5132,27 +5533,27 @@ func (ec *executionContext) unmarshalInputcreatePassageRequest(ctx context.Conte
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"infoCardID", "documentType", "time"}
+	fieldsInOrder := [...]string{"documentID", "type", "time"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "infoCardID":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("infoCardID"))
-			data, err := ec.unmarshalNID2string(ctx, v)
+		case "documentID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("documentID"))
+			data, err := ec.unmarshalNInt2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.InfoCardID = data
-		case "documentType":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("documentType"))
+			it.DocumentID = data
+		case "type":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
 			data, err := ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.DocumentType = data
+			it.Type = data
 		case "time":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("time"))
 			data, err := ec.unmarshalNTime2timeᚐTime(ctx, v)
@@ -5173,20 +5574,20 @@ func (ec *executionContext) unmarshalInputcreateSQUIDPassageRequest(ctx context.
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"infoCardID", "time"}
+	fieldsInOrder := [...]string{"documentID", "time"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "infoCardID":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("infoCardID"))
-			data, err := ec.unmarshalNID2string(ctx, v)
+		case "documentID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("documentID"))
+			data, err := ec.unmarshalNInt2int(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.InfoCardID = data
+			it.DocumentID = data
 		case "time":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("time"))
 			data, err := ec.unmarshalNTime2timeᚐTime(ctx, v)
@@ -5194,6 +5595,33 @@ func (ec *executionContext) unmarshalInputcreateSQUIDPassageRequest(ctx context.
 				return it, err
 			}
 			it.Time = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputdeletePassageRequest(ctx context.Context, obj interface{}) (model.DeletePassageRequest, error) {
+	var it model.DeletePassageRequest
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"id"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
 		}
 	}
 
@@ -5316,6 +5744,33 @@ func (ec *executionContext) unmarshalInputgetFullInfoCardRequest(ctx context.Con
 				return it, err
 			}
 			it.ID = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputgetPassagesRequest(ctx context.Context, obj interface{}) (model.GetPassagesRequest, error) {
+	var it model.GetPassagesRequest
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"documentID"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "documentID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("documentID"))
+			data, err := ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DocumentID = data
 		}
 	}
 
@@ -5587,10 +6042,74 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createPassage(ctx, field)
 			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "deletePassage":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_deletePassage(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "createSQUIDPassage":
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_createSQUIDPassage(ctx, field)
 			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var passageImplementors = []string{"Passage"}
+
+func (ec *executionContext) _Passage(ctx context.Context, sel ast.SelectionSet, obj *model.Passage) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, passageImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Passage")
+		case "id":
+			out.Values[i] = ec._Passage_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "documentID":
+			out.Values[i] = ec._Passage_documentID(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "type":
+			out.Values[i] = ec._Passage_type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "time":
+			out.Values[i] = ec._Passage_time(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -5747,6 +6266,25 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_getEmployeeInfoCardPhoto(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "getPassages":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_getPassages(ctx, field)
 				return res
 			}
 
@@ -6657,6 +7195,21 @@ func (ec *executionContext) marshalNBoolean2bool(ctx context.Context, sel ast.Se
 	return res
 }
 
+func (ec *executionContext) unmarshalNError2string(ctx context.Context, v interface{}) (string, error) {
+	res, err := graphql.UnmarshalString(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNError2string(ctx context.Context, sel ast.SelectionSet, v string) graphql.Marshaler {
+	res := graphql.MarshalString(v)
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+	}
+	return res
+}
+
 func (ec *executionContext) unmarshalNID2string(ctx context.Context, v interface{}) (string, error) {
 	res, err := graphql.UnmarshalID(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -6685,6 +7238,20 @@ func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.Selecti
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) marshalNPassage2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐPassage(ctx context.Context, sel ast.SelectionSet, v model.Passage) graphql.Marshaler {
+	return ec._Passage(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNPassage2ᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐPassage(ctx context.Context, sel ast.SelectionSet, v *model.Passage) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Passage(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
@@ -6985,6 +7552,11 @@ func (ec *executionContext) unmarshalNcreateSQUIDPassageRequest2courseᚋinterna
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNdeletePassageRequest2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐDeletePassageRequest(ctx context.Context, v interface{}) (model.DeletePassageRequest, error) {
+	res, err := ec.unmarshalInputdeletePassageRequest(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNdocumentData2ᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐDocumentData(ctx context.Context, sel ast.SelectionSet, v *model.DocumentData) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -7012,6 +7584,11 @@ func (ec *executionContext) unmarshalNgetEmployeePhotoRequest2courseᚋinternal�
 
 func (ec *executionContext) unmarshalNgetFullInfoCardRequest2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐGetFullInfoCardRequest(ctx context.Context, v interface{}) (model.GetFullInfoCardRequest, error) {
 	res, err := ec.unmarshalInputgetFullInfoCardRequest(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNgetPassagesRequest2courseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐGetPassagesRequest(ctx context.Context, v interface{}) (model.GetPassagesRequest, error) {
+	res, err := ec.unmarshalInputgetPassagesRequest(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -7166,7 +7743,7 @@ func (ec *executionContext) marshalOBoolean2ᚖbool(ctx context.Context, sel ast
 	return res
 }
 
-func (ec *executionContext) unmarshalONull2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
+func (ec *executionContext) unmarshalONil2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -7174,12 +7751,59 @@ func (ec *executionContext) unmarshalONull2ᚖstring(ctx context.Context, v inte
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalONull2ᚖstring(ctx context.Context, sel ast.SelectionSet, v *string) graphql.Marshaler {
+func (ec *executionContext) marshalONil2ᚖstring(ctx context.Context, sel ast.SelectionSet, v *string) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
 	res := graphql.MarshalString(*v)
 	return res
+}
+
+func (ec *executionContext) marshalOPassage2ᚕᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐPassageᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.Passage) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNPassage2ᚖcourseᚋinternalᚋcontrollerᚋv2ᚋgraphqlᚋgraphᚋmodelᚐPassage(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) unmarshalOString2ᚖstring(ctx context.Context, v interface{}) (*string, error) {

@@ -2,11 +2,11 @@ basePath: /api/v2
 definitions:
   admin.createPassageRequest:
     properties:
-      documentType:
-        type: string
       infoCardID:
         type: integer
       time:
+        type: string
+      type:
         type: string
     type: object
   admin.createSQUIDPassageRequest:

@@ -568,13 +568,13 @@ const docTemplatev1 = `{
         "admin.createPassageRequest": {
             "type": "object",
             "properties": {
-                "documentType": {
-                    "type": "string"
-                },
                 "infoCardID": {
                     "type": "integer"
                 },
                 "time": {
+                    "type": "string"
+                },
+                "type": {
                     "type": "string"
                 }
             }

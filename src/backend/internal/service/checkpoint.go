@@ -13,6 +13,7 @@ import (
 type CheckpointService interface {
 	CreatePassage(ctx context.Context, request *dto.CreatePassageRequest) (*model.Passage, error)
 	ListPassages(ctx context.Context, request *dto.ListPassagesRequest) ([]*model.Passage, error)
+	DeletePassage(ctx context.Context, request *dto.DeletePassageRequest) error
 }
 
 type checkpointServiceImpl struct {
@@ -49,4 +50,16 @@ func (c *checkpointServiceImpl) ListPassages(ctx context.Context, request *dto.L
 	}
 
 	return passages, nil
+}
+
+func (c *checkpointServiceImpl) DeletePassage(ctx context.Context, request *dto.DeletePassageRequest) error {
+	c.logger.Infof("delete passage by %d passage ID", request.PassageID)
+
+	err := c.checkpointStorage.DeletePassage(ctx, request)
+	if err != nil {
+		c.logger.Errorf("delete passage: %s", err.Error())
+		return fmt.Errorf("delete passage: %w", err)
+	}
+
+	return nil
 }
