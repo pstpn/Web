@@ -1,0 +1,159 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Картинки-эскизы будущего приложения будущего приложения</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Основные стили */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f0f4f7, #ffffff);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #333;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            margin-top: 30px;
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #50b3a2;
+            letter-spacing: 1px;
+            animation: slideIn 1s ease-out;
+        }
+
+        h2 {
+            margin: 20px 0;
+            font-size: 1.8rem;
+            font-weight: 400;
+            color: #50b3a2;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        p, table {
+            margin: 0 auto 20px;
+            max-width: 800px;
+            padding: 0 10px;
+            background-color: rgba(255, 255, 255, 0.85);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            border-radius: 12px;
+            animation: fadeInUp 0.7s ease-in-out;
+        }
+
+        ul, ol {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 10px;
+        }
+
+        /* Стили для изображений с эффектом увеличения */
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 10px;
+        }
+
+        .image-grid img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .image-grid img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Модальное окно */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.5s;
+        }
+
+        .modal img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+            animation: fadeInUp 0.5s ease-in-out;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        /* Мобильная адаптация */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            h2 {
+                font-size: 1.4rem;
+            }
+
+            table th, table td {
+                padding: 10px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Картинки-эскизы будущего приложения будущего приложения</h1>
+
+    <div class="image-grid">
+        <img src="img/1.png" alt="demo1" onclick="openModal(this)">
+        <img src="img/2.png" alt="demo2" onclick="openModal(this)">
+        <img src="img/3.png" alt="demo3" onclick="openModal(this)">
+        <img src="img/4.png" alt="demo4" onclick="openModal(this)">
+        <img src="img/5.png" alt="demo5" onclick="openModal(this)">
+        <img src="img/6.png" alt="demo6" onclick="openModal(this)">
+        <img src="img/7.png" alt="demo7" onclick="openModal(this)">
+        <img src="img/8.png" alt="demo8" onclick="openModal(this)">
+    </div>
+
+    <div id="modal" class="modal">
+        <img id="modalImg" alt="Модальное изображение">
+    </div>
+
+    <script>
+        function openModal(imgElement) {
+            const modal = document.getElementById('modal');
+            const modalImg = document.getElementById('modalImg');
+            modal.style.display = "flex";
+            modal.style.backgroundColor = "rgb(255, 255, 255)";
+            modalImg.src = imgElement.src;
+            modal.onclick = function() {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>

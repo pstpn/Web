@@ -1,0 +1,369 @@
+﻿<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Приложение для идентификации сотрудников</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Основные стили */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #f0f4f7, #ffffff);
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #333;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            margin-top: 30px;
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #50b3a2;
+            letter-spacing: 1px;
+            animation: slideIn 1s ease-out;
+        }
+
+        h2 {
+            margin: 20px 0;
+            font-size: 1.8rem;
+            font-weight: 400;
+            color: #50b3a2;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        p, table {
+            margin: 0 auto 20px;
+            max-width: 800px;
+            padding: 0 10px;
+            background-color: rgba(255, 255, 255, 0.85);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            border-radius: 12px;
+            animation: fadeInUp 0.7s ease-in-out;
+        }
+
+        ul, ol {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 10px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .content-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Стили для изображений с эффектом увеличения */
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 10px;
+        }
+
+        .image-grid img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .image-grid img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Таблица */
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            animation: fadeInUp 1s;
+        }
+
+        table th, table td {
+            border: 1px solid #ddd;
+            padding: 15px;
+            text-align: center;
+        }
+
+        table th {
+            background-color: #50b3a2;
+            color: white;
+            font-weight: 600;
+        }
+
+        table td a {
+            color: #50b3a2;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* Модальное окно */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.5s;
+        }
+
+        .modal img {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+            animation: fadeInUp 0.5s ease-in-out;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        /* Мобильная адаптация */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            h2 {
+                font-size: 1.4rem;
+            }
+
+            table th, table td {
+                padding: 10px;
+            }
+        }
+
+        #particleCanvas {
+            position: absolute; /* Фиксируем канвас */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            visibility: visible;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Приложение для идентификации сотрудников компании на КПП</h1>
+
+    <h2>Краткое описание проекта</h2>
+        <p>Приложение для идентификации сотрудников компании на КПП. Разрабатываемый программный продукт позволяет сотруднику СБ быстро и качественно организовывать мероприятия по обеспечению безопасности на объектах.</p>
+
+    <h2>Краткое описание предметной области</h2>
+        <p>Предметной областью является сфера безопасности (в частности, организация безопасности каких-либо объектов).</p>
+
+    <h2>Краткий анализ аналогичных решений</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Решение</th>
+                <th>Поиск сотрудников по различным параметрам</th>
+                <th>Хранение документа, удостоверяющего личность</th>
+                <th>Возможность саморегистрации сотрудником</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="https://infostart.ru">ИНФОСТАРТ</a></td>
+                <td>-</td>
+                <td>-</td>
+                <td>+</td>
+            </tr>
+            <tr>
+                <td><a href="https://pass24online.ru">PASS24.online</a></td>
+                <td>-</td>
+                <td>-</td>
+                <td>+</td>
+            </tr>
+            <tr>
+                <td><a href="https://www.mallenom.ru">Малленом Системс</a></td>
+                <td>-</td>
+                <td>+</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td>Реализуемое решение</td>
+                <td>+</td>
+                <td>+</td>
+                <td>+</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>Use-Case</h2>
+    <div class="image-grid">
+        <img src="diagrams/use-case.svg" style="background-color:rgb(255, 255, 255)" alt="Use-Case диаграмма" onclick="openModal(this)">
+    </div>
+
+    <h2>ER-диаграмма</h2>
+    <div class="image-grid">
+        <img src="diagrams/ER.svg" style="background-color:rgb(255, 255, 255)" alt="ER-диаграмма" onclick="openModal(this)">
+    </div>
+
+    <h2>Диаграмма БД</h2>
+    <div class="image-grid">
+        <img src="diagrams/db.jpg" style="background-color:rgb(255, 255, 255)" alt="Диаграмма БД" onclick="openModal(this)">
+    </div>
+
+    <h2>Формализация ключевых бизнес-процессов</h2>
+    <div class="image-grid">
+        <img src="diagrams/BPMN1.svg" style="background-color:rgb(255, 255, 255)" alt="Процесс входа для работы с информационной карточкой" onclick="openModal(this)">
+        <img src="diagrams/BPMN2.svg" style="background-color:rgb(255, 255, 255)" alt="Процесс поиска информации о пользователе" onclick="openModal(this)">
+        <img src="diagrams/BPMN3.svg" style="background-color:rgb(255, 255, 255)" alt="Процесс поиска информации о нескольких сотрудниках" onclick="openModal(this)">
+    </div>
+
+    <h2>Экраны будущего приложения</h2>
+    <div class="image-grid">
+        <img src="demo/1.png" alt="demo1" onclick="openModal(this)">
+        <img src="demo/2.png" alt="demo2" onclick="openModal(this)">
+        <img src="demo/3.png" alt="demo3" onclick="openModal(this)">
+        <img src="demo/4.png" alt="demo4" onclick="openModal(this)">
+        <img src="demo/5.png" alt="demo5" onclick="openModal(this)">
+        <img src="demo/6.png" alt="demo6" onclick="openModal(this)">
+        <img src="demo/7.png" alt="demo7" onclick="openModal(this)">
+        <img src="demo/8.png" alt="demo8" onclick="openModal(this)">
+    </div>
+
+    <div id="modal" class="modal">
+        <img id="modalImg" alt="Модальное изображение">
+    </div>
+
+    <canvas id="particleCanvas"></canvas>
+
+    <script>
+        function openModal(imgElement) {
+            var modal = document.getElementById('modal');
+            var modalImg = document.getElementById('modalImg');
+            modal.style.display = "flex";
+            modal.style.backgroundColor = "rgb(255, 255, 255)";
+            modalImg.src = imgElement.src;
+
+            modal.onclick = function() {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+
+       <!-- Анимация с ключами и замками -->
+    <script>
+        var canvas = document.getElementById('particleCanvas');
+        document.body.appendChild(canvas);
+        var ctx = canvas.getContext("2d");
+        var particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function createParticle(x, y, type) {
+            var particle = {
+                x: x,
+                y: y,
+                size: Math.random() * 20 + 10,
+                speedX: (Math.random() - 0.5) * 4, // Увеличиваем скорость
+                speedY: (Math.random() - 0.5) * 4, // Увеличиваем скорость
+                type: type,
+                opacity: 1
+            };
+            particles.push(particle);
+        }
+
+        function drawParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(function (particle, index) {
+                ctx.globalAlpha = particle.opacity;
+                ctx.font = particle.size + "px Arial";
+                ctx.fillStyle = "#50b3a2";
+
+                if (particle.type === 'key') {
+                    ctx.fillText("🔑", particle.x, particle.y);
+                } else {
+                    ctx.fillText("🔒", particle.x, particle.y);
+                }
+
+                particle.x += particle.speedX;
+                particle.y += particle.speedY;
+                particle.opacity -= 0.02; // Увеличиваем скорость затухания
+
+                if (particle.opacity <= 0) {
+                    particles.splice(index, 1);
+                }
+            });
+        }
+
+        canvas.addEventListener("mousemove", function (event) {
+            var type = Math.random() > 0.5 ? 'key' : 'lock';
+            createParticle(event.clientX, event.clientY, type);
+        });
+
+        function animate() {
+            drawParticles();
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+</html>
