@@ -100,7 +100,7 @@ func (p *ProfileController) FillProfile(c *gin.Context) {
 		DocumentType:         data.Get("documentType"),
 		DocumentFields:       data.Get("documentFields"),
 	}
-	if req.DocumentFields == "" || req.DocumentType == "" || req.DocumentSerialNumber == "" {
+	if req.DocumentType == "" || req.DocumentSerialNumber == "" {
 		p.l.Errorf("failed to decode profile data: empty field")
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": "Incorrect profile data"})
 		return
@@ -119,6 +119,9 @@ func (p *ProfileController) FillProfile(c *gin.Context) {
 
 	for _, newField := range strings.Split(req.DocumentFields, ";") {
 		parsedField := strings.Split(newField, ",")
+		if len(parsedField) < 2 {
+			break
+		}
 		_, err = p.fieldService.CreateDocumentField(c.Request.Context(), &dto.CreateDocumentFieldRequest{
 			DocumentID: document.ID.Int(),
 			Value:      parsedField[1],

@@ -151,7 +151,7 @@ export default {
                     (error) => {
                       if (error.response && error.response.status === 401) {
                         this.$store.dispatch('auth/logout');
-                        this.$router.push('/login');
+                        this.$router.push('/legacy/login');
                       } else {
                         this.message = error.message + ": " + error.response.data.error;
                       }
@@ -197,7 +197,7 @@ export default {
                   (error) => {
                     if (error.response && error.response.status === 401) {
                       this.$store.dispatch('auth/logout');
-                      this.$router.push('/login');
+                      this.$router.push('/legacy/login');
                     } else {
                       this.message = error.message + ": " + error.response.data.error;
                     }
@@ -246,7 +246,7 @@ export default {
                   (error) => {
                     if (error.response && error.response.status === 401) {
                       this.$store.dispatch('auth/logout');
-                      this.$router.push('/login');
+                      this.$router.push('/legacy/login');
                     } else {
                       this.message = error.message + ": " + error.response.data.error;
                     }
