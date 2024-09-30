@@ -35,4 +35,24 @@ back: gen-graphql swagger
 front:
 	cd frontend/course && npm run serve
 
-.PHONY: go-tests-template mockery-template go-test-command gen-swag-v1 gen-swag-v2 gen-graphql gen-graphql-v1 gen-graphql-v2 convert-swag-to-3.0 fmt-swag swagger back front
+run-docker:
+	 docker compose up -d
+
+rm-docker:
+	docker compose down && docker image rm src-backend src-backend-mirror:latest src-backend-ro-1:latest src-backend-ro-2:latest
+
+ab1:
+	ab -n 10000 -c 100 -m GET \
+		-H "Accept-Encoding: gzip,deflate" \
+	  	-H "accept: application/json" \
+	  	-H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzI3NzI4NzU3fQ.rLpyEuHAN8dZoQjBnPSnkSXGaKV1cXcRestfINzc0FU" \
+	  	"http://localhost:8081/api/v2/profile"
+
+ab3:
+	ab -n 10000 -c 100 -m GET \
+		-H "Accept-Encoding: gzip,deflate" \
+	  	-H "accept: application/json" \
+	  	-H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzI3NzI4NzU3fQ.rLpyEuHAN8dZoQjBnPSnkSXGaKV1cXcRestfINzc0FU" \
+	  	"http://127.0.0.1/api/v2/profile"
+
+.PHONY: go-tests-template mockery-template go-test-command gen-swag-v1 gen-swag-v2 gen-graphql gen-graphql-v1 gen-graphql-v2 convert-swag-to-3.0 fmt-swag swagger back front run-docker rm-docker ab1 ab3

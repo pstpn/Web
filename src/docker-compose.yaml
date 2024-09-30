@@ -1,0 +1,183 @@
+services:
+  postgres-master:
+    container_name: postgres-master
+    image: bitnami/postgresql:16
+    volumes:
+      - ./backend/sql/init:/docker-entrypoint-initdb.d
+      - ./data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    environment:
+      POSTGRESQL_REPLICATION_MODE: master
+      POSTGRESQL_REPLICATION_USER: repl_user
+      POSTGRESQL_REPLICATION_PASSWORD: admin
+      POSTGRESQL_USERNAME: postgres
+      POSTGRESQL_PASSWORD: admin
+      POSTGRESQL_DATABASE: course
+      POSTGRESQL_PORT: 5432
+      TZ: "Europe/Moscow"
+    ports:
+      - 5544:5432
+    networks:
+      - mynetwork
+
+  postgres-slave:
+    container_name: postgres-slave
+    image: bitnami/postgresql:16
+    volumes:
+      - ./data/slave:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d admin -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      POSTGRESQL_REPLICATION_MODE: slave
+      POSTGRESQL_REPLICATION_USER: repl_user
+      POSTGRESQL_REPLICATION_PASSWORD: admin
+      POSTGRESQL_MASTER_HOST: postgres-master
+      POSTGRESQL_USERNAME: postges
+      POSTGRESQL_PASSWORD: admin
+      POSTGRESQL_DATABASE: course
+      POSTGRESQL_PORT: 5433
+      TZ: "Europe/Moscow"
+    depends_on:
+      postgres-master:
+        condition: service_healthy
+    ports:
+      - 5545:5432
+    networks:
+      - mynetwork
+
+  mongodb:
+    container_name: mongodb
+    image: mongo
+    ports:
+      - 30001:27017
+    environment:
+      MONGO_INITDB_DATABASE: course
+    networks:
+      - mynetwork
+
+  backend:
+    container_name: web-backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - 8081:8081
+    depends_on:
+      postgres-master:
+        condition: service_healthy
+      mongodb:
+        condition: service_started
+    environment:
+      POSTGRESQL_HOST: postgres-master
+      POSTGRESQL_PORT: 5432
+      POSTGRESQL_USERNAME: postgres
+      POSTGRESQL_PASSWORD: admin
+      POSTGRESQL_DATABASE: course
+      BACKEND_TYPE: docker
+      BACKEND_PORT: 8081
+      MONGODB_DATABASE: course
+      MONGODB_BUCKET: photos
+      MONGODB_URI: mongodb://mongodb:27017
+#      DATABASE_URL: "postgresql://admin:postgres@postgres-master:5432/course"
+      TZ: "Europe/Moscow"
+    networks:
+      - mynetwork
+
+  backend-ro-1:
+    container_name: web-backend-ro-1
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - 8082:8081
+    environment:
+      POSTGRESQL_HOST: postgres-slave
+      POSTGRESQL_PORT: 5432
+      POSTGRESQL_USERNAME: postgres
+      POSTGRESQL_PASSWORD: admin
+      POSTGRESQL_DATABASE: course
+      BACKEND_TYPE: docker
+      BACKEND_PORT: 8081
+      MONGODB_DATABASE: course
+      MONGODB_BUCKET: photos
+      MONGODB_URI: mongodb://mongodb:27017
+#      DATABASE_URL: "postgresql://admin:postgres@postgres-slave:5432/course"
+      TZ: "Europe/Moscow"
+    depends_on:
+      postgres-slave:
+        condition: service_healthy
+      mongodb:
+        condition: service_started
+      backend:
+        condition: service_started
+    networks:
+      - mynetwork
+
+  backend-ro-2:
+    container_name: web-backend-ro-2
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - 8083:8081
+    environment:
+      POSTGRESQL_HOST: postgres-slave
+      POSTGRESQL_PORT: 5432
+      POSTGRESQL_USERNAME: postgres
+      POSTGRESQL_PASSWORD: admin
+      POSTGRESQL_DATABASE: course
+      BACKEND_TYPE: docker
+      BACKEND_PORT: 8081
+      MONGODB_DATABASE: course
+      MONGODB_BUCKET: photos
+      MONGODB_URI: mongodb://mongodb:27017
+#      DATABASE_URL: "postgresql://admin:postgres@postgres-slave:5432/course"
+      TZ: "Europe/Moscow"
+    depends_on:
+      postgres-slave:
+        condition: service_healthy
+      mongodb:
+        condition: service_started
+      backend:
+        condition: service_started
+    networks:
+      - mynetwork
+
+  backend-mirror:
+    container_name: web-backend-mirror
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    environment:
+      POSTGRESQL_HOST: postgres-master
+      POSTGRESQL_PORT: 5432
+      POSTGRESQL_USERNAME: postgres
+      POSTGRESQL_PASSWORD: admin
+      POSTGRESQL_DATABASE: course
+      BACKEND_TYPE: docker
+      BACKEND_PORT: 8081
+      MONGODB_DATABASE: course
+      MONGODB_BUCKET: photos
+      MONGODB_URI: mongodb://mongodb:27017
+#      DATABASE_URL: "postgresql://admin:postgres@postgres-slave:5432/course"
+      TZ: "Europe/Moscow"
+    ports:
+      - 8084:8081
+    depends_on:
+      postgres-master:
+        condition: service_healthy
+      mongodb:
+        condition: service_started
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
