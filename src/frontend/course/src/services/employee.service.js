@@ -34,7 +34,6 @@ class EmployeeService {
                 sort: sortDirection,
             }
         }).then(response => {
-            console.log(response.data.infoCards);
             return response.data.infoCards;
         });
     }
