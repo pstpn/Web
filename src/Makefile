@@ -35,6 +35,9 @@ back: gen-graphql swagger
 front:
 	cd frontend/course && npm run serve
 
+test-front:
+	cd frontend/course && npm run test
+
 run-docker:
 	docker compose up -d
 
@@ -55,4 +58,4 @@ ab3:
 	  	-H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzI3NzI4NzU3fQ.rLpyEuHAN8dZoQjBnPSnkSXGaKV1cXcRestfINzc0FU" \
 	  	"http://127.0.0.1/api/v2/profile"
 
-.PHONY: go-tests-template mockery-template go-test-command gen-swag-v1 gen-swag-v2 gen-graphql gen-graphql-v1 gen-graphql-v2 convert-swag-to-3.0 fmt-swag swagger back front run-docker rm-docker ab1 ab3
+.PHONY: go-tests-template mockery-template go-test-command gen-swag-v1 gen-swag-v2 gen-graphql gen-graphql-v1 gen-graphql-v2 convert-swag-to-3.0 fmt-swag swagger back front test-front run-docker rm-docker ab1 ab3
