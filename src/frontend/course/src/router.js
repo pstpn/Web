@@ -1,42 +1,42 @@
-import { createWebHistory, createRouter } from "vue-router";
-import Home from "./components/Home.vue";
-import Login from "./components/Login.vue";
-import Register from "./components/Register.vue";
-import Employee from "./components/Employee.vue";
+import {createWebHistory, createRouter} from 'vue-router';
+import Home from './components/Home.vue';
+import Login from './components/Login.vue';
+import Register from './components/Register.vue';
+import Employee from './components/Employee.vue';
 
-const Admin = () => import("./components/Admin.vue")
+const Admin = () => import('./components/Admin.vue');
 
 const routes = [
-    {
-        path: "/legacy",
-        name: "home",
-        component: Home,
-    },
-    {
-        path: "/legacy/home",
-        component: Home,
-    },
-    {
-        path: "/legacy/login",
-        component: Login,
-    },
-    {
-        path: "/legacy/register",
-        component: Register,
-    },
-    {
-        path: "/legacy/profile",
-        component: Employee,
-    },
-    {
-        path: "/legacy/find-employees",
-        component: Admin,
-    }
+  {
+    path: '/legacy',
+    name: 'home',
+    component: Home,
+  },
+  {
+    path: '/legacy/home',
+    component: Home,
+  },
+  {
+    path: '/legacy/login',
+    component: Login,
+  },
+  {
+    path: '/legacy/register',
+    component: Register,
+  },
+  {
+    path: '/legacy/profile',
+    component: Employee,
+  },
+  {
+    path: '/legacy/find-employees',
+    component: Admin,
+  },
 ];
 
 const router = createRouter({
-    history: createWebHistory(),
-    routes: routes,
+  history: createWebHistory(),
+  routes: routes,
 });
 
 router.beforeEach((to, from, next) => {
