@@ -36,7 +36,7 @@ front:
 	cd frontend/course && npm run serve
 
 run-docker:
-	 docker compose up -d
+	docker compose up -d
 
 rm-docker:
 	docker compose down && docker image rm src-backend src-backend-mirror:latest src-backend-ro-1:latest src-backend-ro-2:latest
