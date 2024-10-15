@@ -1,4 +1,4 @@
-import EmployeeService from '../services/employee.service';
+import EmployeeService from '../api/employee.service';
 
 export const employee = {
   namespaced: true,

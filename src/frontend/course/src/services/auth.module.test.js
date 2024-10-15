@@ -1,7 +1,7 @@
 import {auth} from './auth.module';
-import AuthService from '../services/auth.service';
+import AuthService from '../api/auth.service';
 
-jest.mock('../services/auth.service');
+jest.mock('../api/auth.service');
 
 describe('auth.module', () => {
   let commit;

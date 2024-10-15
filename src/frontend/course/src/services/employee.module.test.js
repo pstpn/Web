@@ -1,7 +1,7 @@
 import {employee} from './employee.module';
-import EmployeeService from '../services/employee.service';
+import EmployeeService from '../api/employee.service';
 
-jest.mock('../services/employee.service');
+jest.mock('../api/employee.service');
 
 describe('employee.module', () => {
   let commit;

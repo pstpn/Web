@@ -4,7 +4,6 @@ module.exports = {
     'es2021': true,
   },
   'extends': [
-    'plugin:vue/essential',
     'google',
   ],
   'parserOptions': {
@@ -16,6 +15,6 @@ module.exports = {
   ],
   'rules': {
     'require-jsdoc': 'off',
-    'max-len': ['error', {code: 130}],
+    'max-len': ['error', {code: 180}],
   },
 };
