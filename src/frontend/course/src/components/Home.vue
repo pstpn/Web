@@ -12,7 +12,6 @@
 <script>
 export default {
   name: 'HomePage',
-  // Добавьте логику, если необходимо
 };
 </script>
 
