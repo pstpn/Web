@@ -8,28 +8,28 @@ const Admin = () => import('./components/Admin.vue');
 
 const routes = [
   {
-    path: '/legacy',
+    path: '/',
     name: 'home',
     component: Home,
   },
   {
-    path: '/legacy/home',
+    path: '/home',
     component: Home,
   },
   {
-    path: '/legacy/login',
+    path: '/login',
     component: Login,
   },
   {
-    path: '/legacy/register',
+    path: '/register',
     component: Register,
   },
   {
-    path: '/legacy/profile',
+    path: '/profile',
     component: Employee,
   },
   {
-    path: '/legacy/find-employees',
+    path: '/find-employees',
     component: Admin,
   },
 ];
@@ -40,12 +40,12 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  const publicPages = ['/legacy/login', '/legacy/register', '/legacy/home'];
+  const publicPages = ['/login', '/register', '/home'];
   const authRequired = !publicPages.includes(to.path);
   const loggedIn = localStorage.getItem('user');
 
   if (authRequired && !loggedIn) {
-    next('/legacy/login');
+    next('/login');
   } else {
     next();
   }

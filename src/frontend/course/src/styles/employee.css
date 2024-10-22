@@ -1,0 +1,47 @@
+.input-group {
+    width: 100%;
+}
+
+.input-group-append {
+    flex: none;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    transition: border-color 0.3s;
+}
+
+.form-control:focus {
+    border-color: #2575fc;
+    outline: none;
+    box-shadow: 0 0 5px rgba(37, 117, 252, 0.5);
+}
+
+.spinner-border {
+    display: inline-block;
+    width: 1.5rem;
+    height: 1.5rem;
+    vertical-align: text-bottom;
+    border: .25em solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spinner-border .75s linear infinite;
+}
+
+.error-feedback {
+    color: #dc3545;
+    font-size: 14px;
+    margin-top: 4px;
+}

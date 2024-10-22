@@ -66,7 +66,7 @@ export default {
     },
     created() {
       if (this.loggedIn) {
-        this.$router.push("/legacy/home");
+        this.$router.push("/home");
       }
     }
   },
@@ -79,7 +79,7 @@ export default {
           () => {
             this.message = "Success"
 
-            this.$router.push("/legacy/home").then(() => {
+            this.$router.push("/home").then(() => {
               window.location.reload()
             })
           },

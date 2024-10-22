@@ -1,0 +1,119 @@
+.search-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.search-input-container {
+    position: relative;
+    flex: 1;
+}
+
+.search-input {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 100%;
+    transition: all 0.3s;
+}
+
+.search-input:focus {
+    border-color: #007bff;
+}
+
+.search-input-icon {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    color: #ccc;
+}
+
+.filter-dropdown {
+    position: relative;
+    cursor: pointer;
+    width: 50px;
+}
+
+.dropdown-trigger {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #007bff;
+    color: #fff;
+    text-align: center;
+}
+
+.filter-dropdown .dropdown-content {
+    position: absolute;
+    top: calc(100% + 5px);
+    left: 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 1s linear 0.3s;
+}
+
+.filter-dropdown:hover .dropdown-content {
+    opacity: 1;
+    visibility: visible;
+    transition-delay: 0s;
+}
+
+.filter-select {
+    width: 250px;
+    padding: 8px;
+    border-radius: 5px;
+    border: none;
+    background-color: #fff;
+    color: #333;
+    text-align: center;
+    transition: background-color 0.3s;
+}
+
+.filter-select:focus {
+    outline: none;
+}
+
+.search-results {
+    margin-top: 20px;
+}
+
+.search-item {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.search-item:hover {
+    background-color: #f7f7f7;
+}
+
+.employee-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background-color: #f5f5f5;
+}
+
+.card-valid {
+    border: 2px solid green;
+}
+
+.card-invalid {
+    border: 2px solid red;
+}

@@ -123,7 +123,7 @@ export default {
   },
   mounted() {
     if (this.loggedIn) {
-      this.$router.push('/legacy/home');
+      this.$router.push('/home');
     }
   },
   methods: {
@@ -138,7 +138,7 @@ export default {
             this.successful = true;
             this.loading = false;
 
-            this.$router.push("/legacy/home").then(() => {
+            this.$router.push("/home").then(() => {
               window.location.reload()
             })
           },
